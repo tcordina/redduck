@@ -1,0 +1,11 @@
+vich_uploader:
+    db_driver: orm
+    mappings:
+        images_posts:
+            uri_prefix:         '%app.path.images_posts%'
+            upload_destination: '%kernel.root_dir%/../public/uploads/images/posts'
+            namer: vich_uploader.namer_uniqid
+        images_messages:
+            uri_prefix:         '%app.path.images_messages%'
+            upload_destination: '%kernel.root_dir%/../public/uploads/images/messages'
+            namer: vich_uploader.namer_uniqid

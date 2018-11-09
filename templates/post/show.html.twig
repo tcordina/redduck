@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.createdAt ? post.createdAt|date('d/m/Y à H:i:s') : '' }}</p>
+        <hr>
+        <p>{{ post.content }}</p>
+        {% if(post.image is not null) %}
+            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" width="400">
+        {% endif %}
+        <br/><br/>
+        {% if app.user %}
+            Commenter en tant que {{ app.user.username }}
+        {% else %}
+            <a href="{{ path('security_login') }}">Connectez-vous</a> pour commenter.
+        {% endif %}
+        <br/>
+        {{ render(controller(
+            'App\\Controller\\MessageController::new',
+            { 'request': app.request, 'post': post.id }
+        )) }}
+        <br/><br/>
+        <div id="comments">
+            {{ render(controller('App\\Controller\\MessageController::index')) }}
+        </div>
+        <a href="{{ path('post_index') }}">back to list</a>
+        <br/>
+        <a href="{{ path('post_edit', {'id': post.id}) }}">edit</a>
+
+        {{ include('post/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#form-comment-post').on('submit', function (ev) {
+            ev.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('message_new', {'post': post.id}) }}',
+                enctype: 'multipart/form-data',
+                data: {
+                    message: {
+                        'content': $('#message_content').val(),
+                        'imageFile': {
+                            'file': $('#message_imageFile_file').val(),
+                        },
+                        '_token': $('#message__token').val(),
+                    }
+                },
+                success: function (res) {
+                    console.log(res);
+                    $('#comments').empty().load('{{ path('message_index') }}')
+                }
+            })
+        })
+    </script>
+{% endblock %}

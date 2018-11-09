@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post index{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        {% for post in posts %}
+            <a class="list-item-link" href="{{ path('post_show', {'id': post.id}) }}">
+                <div class="post-container">
+                    <div class="row list-row">
+                        <div class="col-1">
+                            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="50">
+                        </div>
+                        <div class="col-11">
+                            <span onclick="document.location.href={{ path('category_show', {'id': post.category.id}) }}" class="badge badge-primary">{{ post.category.name }}</span>
+                            <span>{{ post.title }}</span><br/>
+                            <span>{{ post.messages|length }} commentaires</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

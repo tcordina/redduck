@@ -1,0 +1,13 @@
+{% for message in messages %}
+    <div class="row mt-2">
+        <p><b>{{ message.author.username }}</b>: {{ message.content }}</p>
+        {% if(message.image is not null) %}
+            <img src="{{ asset('uploads/images/messages/' ~ image) }}" alt="">
+        {% endif %}
+
+    </div>
+{% else %}
+    <p>Pas de commentaires pour le moment</p>
+{% endfor %}
+
+
