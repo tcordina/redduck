@@ -3,8 +3,12 @@
 {% block title %}Post{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>{{ post.title }}</h1>
+    <div class="container mt-2">
+        <span>
+            <a class="badge badge-primary" href="{{ post.category.id }}">{{ post.category.name }}</a>
+            posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">{{ post.author.username }}</a>
+        </span>
+        <h1 class="mt-2">{{ post.title }}</h1>
         <p>{{ post.createdAt ? post.createdAt|date('d/m/Y à H:i:s') : '' }}</p>
         <hr>
         <p>{{ post.content }}</p>
@@ -14,14 +18,11 @@
         <br/><br/>
         {% if app.user %}
             Commenter en tant que {{ app.user.username }}
+            {{ render(url('message_new', {'post': post.id})) }}
         {% else %}
             <a href="{{ path('security_login') }}">Connectez-vous</a> pour commenter.
         {% endif %}
         <br/>
-        {{ render(controller(
-            'App\\Controller\\MessageController::new',
-            { 'request': app.request, 'post': post.id }
-        )) }}
         <br/><br/>
         <div id="comments">
             {{ render(controller('App\\Controller\\MessageController::index')) }}
@@ -35,7 +36,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script>
+    {#<script>
         $('#form-comment-post').on('submit', function (ev) {
             ev.preventDefault();
             $.ajax({
@@ -57,5 +58,5 @@
                 }
             })
         })
-    </script>
+    </script>#}
 {% endblock %}

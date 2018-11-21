@@ -1,11 +1,11 @@
 {% for message in messages %}
     <div class="row mt-2">
-        <p><b>{{ message.author.username }}</b>: {{ message.content }}</p>
+        <p style="width: 100%;"><b>{{ message.author.username }}</b>: {{ message.content }}</p>
         {% if(message.image is not null) %}
-            <img src="{{ asset('uploads/images/messages/' ~ image) }}" alt="">
+            <img class="img-fluid" src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="" width="150">
         {% endif %}
-
     </div>
+    <hr class="my-1">
 {% else %}
     <p>Pas de commentaires pour le moment</p>
 {% endfor %}

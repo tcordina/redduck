@@ -39,7 +39,9 @@ class MessageController extends AbstractController
             $em->persist($message);
             $em->flush();
 
-            return $this->redirectToRoute('message_index');
+            return $this->redirectToRoute('post_show', [
+                'id' => $post->getId(),
+            ]);
         }
 
         return $this->render('message/new.html.twig', [

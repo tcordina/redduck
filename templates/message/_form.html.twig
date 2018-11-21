@@ -1,4 +1,5 @@
-{{ form_start(form, {'attr': {'id': 'form-comment-post'} }) }}
+{% set post = app.request.attributes.get('_route_params')['post']  %}
+{{ form_start(form, {'attr': {'id': 'form-comment-post', 'action': path('message_new', {'post': post}) } }) }}
     {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">{{ button_label|default('Commenter') }}</button>
+    <button type="submit" form="form-comment-post" class="btn btn-primary">{{ button_label|default('Commenter') }}</button>
 {{ form_end(form) }}
