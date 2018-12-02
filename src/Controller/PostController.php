@@ -101,7 +101,7 @@ class PostController extends AbstractController
     public function upvote(Post $post)
     {
         if (!$this->getUser() instanceof UserInterface) {
-            return  $this->redirectToRoute('security_login');
+            return new Response('login');
         }
         $em = $this->getDoctrine()->getManager();
         if ($post->getUpvotes()->contains($this->getUser())) {
@@ -125,7 +125,7 @@ class PostController extends AbstractController
     public function downvote(Post $post)
     {
         if (!$this->getUser() instanceof UserInterface) {
-            return  $this->redirectToRoute('security_login');
+            return new Response('login');
         }
         $em = $this->getDoctrine()->getManager();
         if ($post->getDownvotes()->contains($this->getUser())) {

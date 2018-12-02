@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit SubCategory{% endblock %}
+
+{% block body %}
+    <h1>Edit SubCategory</h1>
+
+    {{ include('subcategory/_form.html.twig', {'button_label': 'Update'}) }}
+
+    {{ include('subcategory/_delete_form.html.twig') }}
+{% endblock %}

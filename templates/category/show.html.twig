@@ -6,11 +6,11 @@
     <h1>{{ category.name }}</h1>
 
     {% for sub in category.subcategories %}
-        <a class="list-item-link" href="{{ path('sub_category_show', {'id': sub.id}) }}">
+        <a class="list-item-link" href="{{ path('subcategory_index') }}">
             <div class="post-container">
                 <div class="row list-row">
                     <div class="col-12">
-                        <span onclick="document.location.href={{ path('category_show', {'id': sub.category.id}) }}"
+                        <span onclick="document.location.href='{{ path('category_show', {'slug': sub.category.slug}) }}';"
                               class="badge badge-primary">{{ sub.category.name }}</span>
                         <span>{{ sub.name }}</span><br/>
                         <span>{{ sub.posts|length }} posts</span>
@@ -21,7 +21,7 @@
     {% endfor %}
     <a href="{{ path('category_index') }}">back to list</a><br/>
 
-    <a href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
+    <a href="{{ path('category_edit', {'slug': category.slug}) }}">edit</a>
 
     {{ include('category/_delete_form.html.twig') }}
 {% endblock %}

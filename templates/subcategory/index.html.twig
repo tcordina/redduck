@@ -14,13 +14,13 @@
             </tr>
         </thead>
         <tbody>
-        {% for sub_category in sub_categories %}
+        {% for subcategory in subcategories %}
             <tr>
-                <td>{{ sub_category.id }}</td>
-                <td>{{ sub_category.name }}</td>
+                <td>{{ subcategory.id }}</td>
+                <td>{{ subcategory.name }}</td>
                 <td>
-                    <a href="{{ path('sub_category_show', {'id': sub_category.id}) }}">show</a>
-                    <a href="{{ path('sub_category_edit', {'id': sub_category.id}) }}">edit</a>
+                    <a href="{{ path('subcategory_show', {'slug': subcategory.slug}) }}">show</a>
+                    <a href="{{ path('subcategory_edit', {'slug': subcategory.slug}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -30,6 +30,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('sub_category_new') }}">Create new</a>
 {% endblock %}

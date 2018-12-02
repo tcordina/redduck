@@ -11,20 +11,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/subcategory")
+ * @Route("/sub")
  */
 class SubCategoryController extends AbstractController
 {
     /**
-     * @Route("/", name="sub_category_index", methods="GET")
+     * @Route("/", name="subcategory_index", methods="GET")
      */
     public function index(SubCategoryRepository $subCategoryRepository): Response
     {
-        return $this->render('sub_category/index.html.twig', ['sub_categories' => $subCategoryRepository->findAll()]);
+        return $this->render('subcategory/index.html.twig', ['subcategories' => $subCategoryRepository->findAll()]);
     }
 
     /**
-     * @Route("/new", name="sub_category_new", methods="GET|POST")
+     * @Route("/new", name="subcategory_new", methods="GET|POST")
      */
     public function new(Request $request): Response
     {
@@ -33,29 +33,32 @@ class SubCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = str_replace(' ', '-', $subCategory->getName());
+            $slug = str_replace('\'', '', $slug);
+            $subCategory->setSlug(strtolower($slug));
             $em = $this->getDoctrine()->getManager();
             $em->persist($subCategory);
             $em->flush();
 
-            return $this->redirectToRoute('sub_category_index');
+            return $this->redirectToRoute('subcategory_index');
         }
 
-        return $this->render('sub_category/new.html.twig', [
-            'sub_category' => $subCategory,
+        return $this->render('subcategory/new.html.twig', [
+            'subcategory' => $subCategory,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/{id}", name="sub_category_show", methods="GET")
+     * @Route("/{slug}", name="subcategory_show", methods="GET")
      */
     public function show(SubCategory $subCategory): Response
     {
-        return $this->render('sub_category/show.html.twig', ['sub_category' => $subCategory]);
+        return $this->render('subcategory/show.html.twig', ['subcategory' => $subCategory]);
     }
 
     /**
-     * @Route("/{id}/edit", name="sub_category_edit", methods="GET|POST")
+     * @Route("/{slug}/edit", name="subcategory_edit", methods="GET|POST")
      */
     public function edit(Request $request, SubCategory $subCategory): Response
     {
@@ -63,19 +66,22 @@ class SubCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = str_replace(' ', '-', $subCategory->getName());
+            $slug = str_replace('\'', '', $slug);
+            $subCategory->setSlug(strtolower($slug));
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('sub_category_index', ['id' => $subCategory->getId()]);
+            return $this->redirectToRoute('subcategory_index', ['id' => $subCategory->getId()]);
         }
 
-        return $this->render('sub_category/edit.html.twig', [
-            'sub_category' => $subCategory,
+        return $this->render('subcategory/edit.html.twig', [
+            'subcategory' => $subCategory,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/{id}", name="sub_category_delete", methods="DELETE")
+     * @Route("/{slug}", name="subcategory_delete", methods="DELETE")
      */
     public function delete(Request $request, SubCategory $subCategory): Response
     {
@@ -85,6 +91,6 @@ class SubCategoryController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('sub_category_index');
+        return $this->redirectToRoute('subcategory_index');
     }
 }

@@ -19,9 +19,14 @@ class Category
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, unique=true)
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="string", length=100, unique=true)
+     */
+    private $slug;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\SubCategory", mappedBy="category", fetch="EAGER")
@@ -30,8 +35,12 @@ class Category
 
     public function __construct()
     {
-        $this->posts = new ArrayCollection();
         $this->subcategories = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->slug;
     }
 
 
@@ -52,33 +61,14 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection|Post[]
-     */
-    public function getPosts(): Collection
+    public function getSlug(): ?string
     {
-        return $this->posts;
+        return $this->slug;
     }
 
-    public function addPost(Post $post): self
+    public function setSlug(string $slug): self
     {
-        if (!$this->posts->contains($post)) {
-            $this->posts[] = $post;
-            $post->setCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removePost(Post $post): self
-    {
-        if ($this->posts->contains($post)) {
-            $this->posts->removeElement($post);
-            // set the owning side to null (unless already changed)
-            if ($post->getCategory() === $this) {
-                $post->setCategory(null);
-            }
-        }
+        $this->slug = $slug;
 
         return $this;
     }
@@ -113,4 +103,5 @@ class Category
 
         return $this;
     }
+
 }
