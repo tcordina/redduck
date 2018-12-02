@@ -29,9 +29,9 @@ class Post
     private $author;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity="App\Entity\SubCategory", inversedBy="posts")
      */
-    private $category;
+    private $subcategory;
 
     /**
      * @ORM\Column(type="string", length=100)
@@ -75,9 +75,21 @@ class Post
      */
     private $messages;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="upvotedposts")
+     */
+    private $upvotes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="downvotedposts")
+     */
+    private $downvotes;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->upvotes = new ArrayCollection();
+        $this->downvotes = new ArrayCollection();
     }
 
 
@@ -187,18 +199,6 @@ class Post
         return $this;
     }
 
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Message[]
      */
@@ -225,6 +225,74 @@ class Post
             if ($message->getPost() === $this) {
                 $message->setPost(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getSubcategory(): ?SubCategory
+    {
+        return $this->subcategory;
+    }
+
+    public function setSubcategory(?SubCategory $subcategory): self
+    {
+        $this->subcategory = $subcategory;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUpvotes(): Collection
+    {
+        return $this->upvotes;
+    }
+
+    public function addUpvote(User $upvote): self
+    {
+        if (!$this->upvotes->contains($upvote)) {
+            $this->upvotes[] = $upvote;
+            $upvote->addUpvotedpost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUpvote(User $upvote): self
+    {
+        if ($this->upvotes->contains($upvote)) {
+            $this->upvotes->removeElement($upvote);
+            $upvote->removeUpvotedpost($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getDownvotes(): Collection
+    {
+        return $this->downvotes;
+    }
+
+    public function addDownvote(User $downvote): self
+    {
+        if (!$this->downvotes->contains($downvote)) {
+            $this->downvotes[] = $downvote;
+            $downvote->addDownvotedpost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDownvote(User $downvote): self
+    {
+        if ($this->downvotes->contains($downvote)) {
+            $this->downvotes->removeElement($downvote);
+            $downvote->removeDownvotedpost($this);
         }
 
         return $this;

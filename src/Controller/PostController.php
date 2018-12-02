@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Form\MessageType;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/post")
@@ -93,5 +93,53 @@ class PostController extends AbstractController
         }
 
         return $this->redirectToRoute('post_index');
+    }
+
+    /**
+     * @Route("/{id}/upvote", name="post_upvote", methods="GET|POST")
+     */
+    public function upvote(Post $post)
+    {
+        if (!$this->getUser() instanceof UserInterface) {
+            return  $this->redirectToRoute('security_login');
+        }
+        $em = $this->getDoctrine()->getManager();
+        if ($post->getUpvotes()->contains($this->getUser())) {
+            $post->removeUpvote($this->getUser());
+            $em->persist($post);
+            $em->flush();
+            return new Response('removed');
+        }
+        if ($post->getDownvotes()->contains($this->getUser())) {
+            $post->removeDownvote($this->getUser());
+        }
+        $post->addUpvote($this->getUser());
+        $em->persist($post);
+        $em->flush();
+        return new Response('added');
+    }
+
+    /**
+     * @Route("/{id}/downvote", name="post_downvote", methods="GET|POST")
+     */
+    public function downvote(Post $post)
+    {
+        if (!$this->getUser() instanceof UserInterface) {
+            return  $this->redirectToRoute('security_login');
+        }
+        $em = $this->getDoctrine()->getManager();
+        if ($post->getDownvotes()->contains($this->getUser())) {
+            $post->removeDownvote($this->getUser());
+            $em->persist($post);
+            $em->flush();
+            return new Response('removed');
+        }
+        if ($post->getUpvotes()->contains($this->getUser())) {
+            $post->removeUpvote($this->getUser());
+        }
+        $post->addDownvote($this->getUser());
+        $em->persist($post);
+        $em->flush();
+        return new Response('added');
     }
 }

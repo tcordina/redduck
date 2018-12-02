@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\SubCategoryRepository")
  */
-class Category
+class SubCategory
 {
     /**
      * @ORM\Id()
@@ -24,16 +24,19 @@ class Category
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\SubCategory", mappedBy="category", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="subcategories")
      */
-    private $subcategories;
+    private $category;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="subcategory")
+     */
+    private $posts;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
-        $this->subcategories = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -52,6 +55,18 @@ class Category
         return $this;
     }
 
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Post[]
      */
@@ -64,7 +79,7 @@ class Category
     {
         if (!$this->posts->contains($post)) {
             $this->posts[] = $post;
-            $post->setCategory($this);
+            $post->setSubcategory($this);
         }
 
         return $this;
@@ -75,39 +90,8 @@ class Category
         if ($this->posts->contains($post)) {
             $this->posts->removeElement($post);
             // set the owning side to null (unless already changed)
-            if ($post->getCategory() === $this) {
-                $post->setCategory(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|SubCategory[]
-     */
-    public function getSubcategories(): Collection
-    {
-        return $this->subcategories;
-    }
-
-    public function addSubcategory(SubCategory $subcategory): self
-    {
-        if (!$this->subcategories->contains($subcategory)) {
-            $this->subcategories[] = $subcategory;
-            $subcategory->setCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSubcategory(SubCategory $subcategory): self
-    {
-        if ($this->subcategories->contains($subcategory)) {
-            $this->subcategories->removeElement($subcategory);
-            // set the owning side to null (unless already changed)
-            if ($subcategory->getCategory() === $this) {
-                $subcategory->setCategory(null);
+            if ($post->getSubcategory() === $this) {
+                $post->setSubcategory(null);
             }
         }
 

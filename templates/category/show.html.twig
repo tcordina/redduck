@@ -3,29 +3,25 @@
 {% block title %}{{ category.name }} - posts{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>{{ category.name }}</h1>
+    <h1>{{ category.name }}</h1>
 
-        {% for post in category.posts %}
-            <a class="list-item-link" href="{{ path('post_show', {'id': post.id}) }}">
-                <div class="post-container">
-                    <div class="row list-row">
-                        <div class="col-1">
-                            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="50">
-                        </div>
-                        <div class="col-11">
-                            <span onclick="document.location.href={{ path('category_show', {'id': post.category.id}) }}" class="badge badge-primary">{{ post.category.name }}</span>
-                            <span>{{ post.title }}</span><br/>
-                            <span>{{ post.messages|length }} commentaires</span>
-                        </div>
+    {% for sub in category.subcategories %}
+        <a class="list-item-link" href="{{ path('sub_category_show', {'id': sub.id}) }}">
+            <div class="post-container">
+                <div class="row list-row">
+                    <div class="col-12">
+                        <span onclick="document.location.href={{ path('category_show', {'id': sub.category.id}) }}"
+                              class="badge badge-primary">{{ sub.category.name }}</span>
+                        <span>{{ sub.name }}</span><br/>
+                        <span>{{ sub.posts|length }} posts</span>
                     </div>
                 </div>
-            </a>
-        {% endfor %}
-        <a href="{{ path('category_index') }}">back to list</a>
+            </div>
+        </a>
+    {% endfor %}
+    <a href="{{ path('category_index') }}">back to list</a><br/>
 
-        <a href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
+    <a href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
 
-        {{ include('category/_delete_form.html.twig') }}
-    </div>
+    {{ include('category/_delete_form.html.twig') }}
 {% endblock %}

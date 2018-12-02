@@ -12,7 +12,7 @@
                             <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="50">
                         </div>
                         <div class="col-11">
-                            <span onclick="document.location.href={{ path('category_show', {'id': post.category.id}) }}" class="badge badge-primary">{{ post.category.name }}</span>
+                            <span onclick="location.href='{{ path('sub_category_show', {'id': post.subcategory.id}) }}';" class="badge badge-primary">{{ post.subcategory.name }}</span>
                             <span>{{ post.title }}</span><br/>
                             <span>{{ post.messages|length }} commentaires</span>
                         </div>

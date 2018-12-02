@@ -62,6 +62,18 @@ class User implements UserInterface
     private $imageFile;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="upvotes")
+     * @ORM\JoinTable(name="upvotes")
+     */
+    private $upvotedposts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="downvotes")
+     * @ORM\JoinTable(name="downvotes")
+     */
+    private $downvotedposts;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
@@ -82,6 +94,8 @@ class User implements UserInterface
     {
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->upvotedposts = new ArrayCollection();
+        $this->downvotedposts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -261,6 +275,44 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getUpvotedposts(): Collection
+    {
+        return $this->upvotedposts;
+    }
+
+    public function addUpvotedpost(Post $upvotedpost): self
+    {
+        if (!$this->upvotedposts->contains($upvotedpost)) {
+            $this->upvotedposts[] = $upvotedpost;
+        }
+
+        return $this;
+    }
+
+    public function removeUpvotedpost(Post $upvotedpost): self
+    {
+        if ($this->upvotedposts->contains($upvotedpost)) {
+            $this->upvotedposts->removeElement($upvotedpost);
+        }
+
+        return $this;
+    }
+
 
     /**
      * @see UserInterface
@@ -279,14 +331,28 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getBio(): ?string
+    /**
+     * @return Collection|Post[]
+     */
+    public function getDownvotedposts(): Collection
     {
-        return $this->bio;
+        return $this->downvotedposts;
     }
 
-    public function setBio(?string $bio): self
+    public function addDownvotedpost(Post $downvotedpost): self
     {
-        $this->bio = $bio;
+        if (!$this->downvotedposts->contains($downvotedpost)) {
+            $this->downvotedposts[] = $downvotedpost;
+        }
+
+        return $this;
+    }
+
+    public function removeDownvotedpost(Post $downvotedpost): self
+    {
+        if ($this->downvotedposts->contains($downvotedpost)) {
+            $this->downvotedposts->removeElement($downvotedpost);
+        }
 
         return $this;
     }

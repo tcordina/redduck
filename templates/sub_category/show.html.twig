@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ sub_category.name }} - posts{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ sub_category.name }}</h1>
+
+        {% for post in sub_category.posts %}
+            <div class="post-container"{# onclick="location.href='{{ path('post_show', {'id': post.id}) }}';"#}>
+                <div class="row list-row">
+                    <div class="col-1 buttons-vote" align="right">
+                        <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
+                                onclick="upVote(this, {{ post.id }})">
+                            <i class="fas fa-sort-up"></i>
+                        </button>
+                        <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
+                                onclick="downVote(this, {{ post.id }})">
+                            <i class="fas fa-sort-down"></i>
+                        </button>
+                    </div>
+                    <div class="col-1">
+                        <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="50">
+                    </div>
+                    <div class="col-10">
+                        <span>{{ post.title }}</span><br/>
+                        <span>{{ post.messages|length }} commentaires</span>
+                        <span>{{ post.upvotes|length - post.downvotes|length }} karma</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <a href="{{ path('sub_category_index') }}">back to list</a>
+
+        <a href="{{ path('sub_category_edit', {'id': sub_category.id}) }}">edit</a>
+
+        {{ include('sub_category/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function upVote(btn, postId) {
+            postId = postId.toString();
+            let url = '{{ path('post_upvote', {'id': 'postId'}) }}'
+            url = url.replace('postId', postId);
+            $.ajax({
+                method: 'POST',
+                url: url,
+                type: 'text',
+                success: function (res) {
+                    if (res == 'added') {
+                        $(btn).addClass('text-info')
+                        $(btn).next().removeClass('text-warning');
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-info')
+                    }
+                }
+            })
+        }
+
+        function downVote(btn, postId) {
+            postId = postId.toString();
+            let url = '{{ path('post_downvote', {'id': 'postId'}) }}'
+            url = url.replace('postId', postId);
+            $.ajax({
+                method: 'POST',
+                url: url,
+                type: 'text',
+                success: function (res) {
+                    if (res == 'added') {
+                        $(btn).addClass('text-warning')
+                        $(btn).prev().removeClass('text-info');
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-warning')
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}
