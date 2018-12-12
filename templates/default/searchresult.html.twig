@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="text-center">{{ resultsCount }} results for <b>{{ searchQuery }}</b></div>
+        {% if categories is not empty %}
+            <h2>Categories</h2>
+            <div class="list-group">
+                {% for categorie in categories %}
+                    <a href="{{ path('category_show', {'slug': categorie.slug}) }}"
+                       class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ categorie.name }}</h5>
+                            <small>
+                                {% set postCount = 0 %}
+                                {% for subcategorie in categorie.subcategories %}
+                                    {% set postCount = postCount + subcategorie.posts|length %}
+                                {% endfor %}
+                                {{ postCount }} posts
+                            </small>
+                        </div>
+                        <p class="mb-1">{{ categorie.description|length > 50 ? categorie.description|slice(0,50) ~ '...' : categorie.description }}</p>
+                        <small>Donec id elit non mi porta.</small>
+                    </a>
+                {% endfor %}
+            {% endif %}
+            {% if subcategories is not empty %}
+            <h2 class="mt-4">Sub-categories</h2>
+            <div class="list-group">
+                {% for subcategorie in subcategories %}
+                    <a href="{{ path('subcategory_show', {'slug': subcategorie.slug}) }}"
+                       class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ subcategorie.name }}</h5>
+                            <small>
+                                {{ subcategorie.posts|length }} posts
+                            </small>
+                        </div>
+                        <p class="mb-1">{{ subcategorie.description|length > 50 ? subcategorie.description|slice(0,50) ~ '...' : subcategorie.description }}</p>
+                        <small>Donec id elit non mi porta.</small>
+                    </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if posts is not empty %}
+            <h2 class="mt-4">Posts</h2>
+            <div class="list-group">
+                {% for post in posts %}
+                    <a href="{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}"
+                       class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="row">
+                            <div class="col-1">
+                                <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="80">
+                            </div>
+                            <div class="col-11">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ post.title }}</h5>
+                                    <small>
+                                        {{ post.createdAt|timeago }}
+                                    </small>
+                                </div>
+                                <p class="mb-1">{{ post.content|length > 50 ? post.content|slice(0,50) ~ '...' : post.content }}</p>
+                                <!--<small>afficher le karma</small>-->
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

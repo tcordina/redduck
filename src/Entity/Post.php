@@ -23,7 +23,7 @@ class Post
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;

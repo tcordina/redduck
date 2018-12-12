@@ -7,7 +7,7 @@
         <h1>{{ subcategory.name }}</h1>
 
         {% for post in subcategory.posts %}
-            <div class="post-container" onclick="location.href='{{ path('post_show', {'id': post.id}) }}';">
+            <div class="post-container" onclick="location.href='{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}';">
                 <div class="row list-row">
                     <div class="col-1 buttons-vote" align="right">
                         <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"

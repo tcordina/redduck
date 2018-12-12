@@ -61,7 +61,7 @@ class CategoryController extends AbstractController
 
     /**
      * @Route("/{slug}/edit", name="category_edit", methods="GET|POST")
-     * @Security("is_granted('POST_EDIT')")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function edit(Request $request, Category $category): Response
     {

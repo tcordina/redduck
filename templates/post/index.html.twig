@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container mt-4">
         {% for post in posts %}
-            <a class="list-item-link" href="{{ path('post_show', {'id': post.id}) }}">
+            <a class="list-item-link" href="{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}">
                 <div class="post-container">
                     <div class="row list-row">
                         <div class="col-1">

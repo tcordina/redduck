@@ -25,6 +25,9 @@ security:
             guard:
                 authenticators:
                     - App\Security\FormLoginAuthenticator
+    role_hierarchy:
+        ROLE_MODERATOR: ROLE_USER
+        ROLE_ADMIN: ROLE_MODERATOR
 
             # activate different ways to authenticate
 

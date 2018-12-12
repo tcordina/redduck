@@ -3,7 +3,37 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>LE FORUM OUI</h1>
-</div>
+    <div class="container">
+        <div id="accordion">
+            <h2 class="mb-3">Categories</h2>
+            {% for categorie in categories %}
+                <div class="card">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                         aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <a href="{{ path('category_show', {'slug': categorie.slug}) }}">
+                                {{ categorie.name }}
+                            </a>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <h4 class="mb-3">Sub categories</h4>
+                                {% for subcategory in categorie.subcategories %}
+                                    <a href="{{ path('subcategory_show', {'slug': subcategory.slug}) }}">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ subcategory.name }}
+                                            <span class="badge badge-primary badge-pill">{{ subcategory.posts|length }}</span>
+                                        </li>
+                                    </a>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
