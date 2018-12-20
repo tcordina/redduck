@@ -8,16 +8,16 @@
             <h2 class="mb-3">Categories</h2>
             {% for categorie in categories %}
                 <div class="card">
-                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapse{{ loop.index }}"
-                         aria-expanded="true" aria-controls="collapseOne">
+                    <div class="card-header" id="heading{{ loop.index }}" data-toggle="collapse"
+                         data-target="#collapse{{ loop.index }}"
+                         aria-expanded="true" aria-controls="collapse{{ loop.index }}">
                         <h5 class="mb-0">
                             <a href="{{ path('category_show', {'slug': categorie.slug}) }}">
                                 {{ categorie.name }}
                             </a>
                         </h5>
                     </div>
-
-                    <div id="collapse{{ loop.index }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="collapse{{ loop.index }}" class="collapse show" aria-labelledby="heading{{ loop.index }}">
                         <div class="card-body">
                             <ul class="list-group">
                                 <h4 class="mb-3">Sub categories</h4>
@@ -32,7 +32,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div><br/>
             {% endfor %}
         </div>
     </div>
