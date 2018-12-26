@@ -1,0 +1,95 @@
+body {
+    overflow-x: hidden;
+}
+
+#signin-wrapper {
+    height: 80vh;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signin .checkbox {
+    font-weight: 400;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.post-container {
+    border-top: 1px solid rgba(12, 12, 12, 0.1);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+}
+
+.post-container:last-of-type {
+    border-bottom: 1px solid rgba(12, 12, 12, 0.1);
+}
+
+.list-item-link, .list-item-link:hover, .list-item-link:focus {
+    color: inherit;
+    background-color: inherit;
+    text-decoration: inherit;
+}
+
+.post-title {
+    font-size: 20px;
+}
+
+.post-author {
+    margin-left: 15px;
+    font-style: italic;
+    opacity: .8;
+    font-weight: 200;
+}
+
+.buttons-vote button {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    display: block;
+}
+
+.buttons-vote i {
+    font-size: 30px;
+    line-height: 0.4 !important;
+    display: block;
+}
+
+.card-header {
+    cursor: pointer;
+}

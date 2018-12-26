@@ -87,6 +87,7 @@ class Post
 
     public function __construct()
     {
+        $this->createdAt = new \DateTime('now');
         $this->messages = new ArrayCollection();
         $this->upvotes = new ArrayCollection();
         $this->downvotes = new ArrayCollection();

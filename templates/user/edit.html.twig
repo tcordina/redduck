@@ -1,13 +1,46 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Edit User{% endblock %}
-
-{% block body %}
-    <h1>Edit User</h1>
-
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('user_index') }}">back to list</a>
-
-    {{ include('user/_delete_form.html.twig') }}
-{% endblock %}
+{{ form_start(form, {'attr': {'action': path('user_edit', {'username': user.username} )} }) }}
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Email</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.email) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Identifiant</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.username) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Biographie</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.bio) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Image</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.imageFile) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Mot de passe</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.plainpassword.first, {'required': false}) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label">Répéter mot de passe</label>
+    <div class="col-lg-9">
+        {{ form_widget(form.plainpassword.second, {'required': false}) }}
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-3 col-form-label form-control-label"></label>
+    <div class="col-lg-9">
+        <input type="reset" class="btn btn-secondary" value="Cancel">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+</div>
+{{ form_rest(form) }}
+{{ form_end(form) }}

@@ -76,6 +76,11 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     private $updatedAt;
 
     private $plainpassword;
@@ -90,8 +95,10 @@ class User implements UserInterface
      */
     private $messages;
 
+
     public function __construct()
     {
+        $this->createdAt = new \DateTime('now');
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->upvotedposts = new ArrayCollection();
@@ -190,6 +197,18 @@ class User implements UserInterface
         }
     }
 
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
@@ -273,6 +292,35 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getActivity(): array
+    {
+        $posts = array_reverse($this->posts->toArray());
+        $messages = array_reverse($this->messages->toArray());
+        $activity = [];
+        $latest_post = 0;
+        $latest_message = 0;
+        for ($i = 0; $i < 10; $i++) {
+            if (!isset($posts[$latest_post])) {
+                if (isset($messages[$latest_message])) {
+                    $activity[$i] = $messages[$latest_message];
+                    $latest_message++;
+                }
+            } elseif (!isset($messages[$latest_message])) {
+                if (isset($posts[$latest_post])) {
+                    $activity[$i] = $posts[$latest_post];
+                    $latest_post++;
+                }
+            } elseif ($posts[$latest_post]->getCreatedAt() > $messages[$latest_message]->getCreatedAt()) {
+                $activity[$i] = $posts[$latest_post];
+                $latest_post++;
+            } elseif ($posts[$latest_post]->getCreatedAt() < $messages[$latest_message]->getCreatedAt()) {
+                $activity[$i] = $messages[$latest_message];
+                $latest_message++;
+            }
+        }
+        return $activity;
     }
 
     public function getBio(): ?string

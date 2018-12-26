@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\DBALException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -66,15 +67,27 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $encoder->encodePassword($user, $user->getPlainpassword());
             $user->setPassword($password);
-            $this->getDoctrine()->getManager()->flush();
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash('success', 'Profile successfully updated.');
+                return $this->redirectToRoute('user_show', [
+                    'username' => $user->getUsername(),
+                ]);
+            } catch (DBALException $e) {
+                $this->addFlash('danger', 'An error occured. Try again later.');
+                return $this->redirectToRoute('user_show', [
+                    'username' => $user->getUsername(),
+                ]);
+            }
         }
 
-        return $this->redirectToRoute('user_show', [
-            'username' => $user->getUsername(),
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
         ]);
     }
 
-    /*
+    /**
      * @Route("/{id}", name="user_delete", methods="DELETE")
      */
     public function delete(Request $request, User $user): Response

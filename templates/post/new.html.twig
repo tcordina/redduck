@@ -9,3 +9,14 @@
 
     <a href="{{ path('post_index') }}">back to list</a>
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#post_imageFile_file').on('change', function () {
+            var filePath = $(this).val();
+            fileSplit = filePath.split('\\');
+            fileName = fileSplit[fileSplit.length - 1];
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+{% endblock %}

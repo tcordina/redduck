@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use Doctrine\DBAL\DBALException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,8 +41,14 @@ class SecurityController extends AbstractController
             $user->setPassword($password);
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
-            $em->flush();
-            return $this->redirectToRoute('security_login');
+            try {
+                $em->flush();
+                $this->addFlash('success', 'Registration success. You can now sign in !');
+                return $this->redirectToRoute('security_login');
+            } catch(DBALException $e) {
+                $this->addFlash('danger', 'An error occured, please try again.');
+                return $this->redirectToRoute('security_register');
+            }
         }
         return $this->render('security/register.html.twig', [
             'form' => $form->createView(),

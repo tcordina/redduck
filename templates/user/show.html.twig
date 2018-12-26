@@ -3,19 +3,20 @@
 {% block title %}{{ user.username }} - profil{% endblock %}
 
 {% block body %}
+    {{ dump(user.activity) }}
     <div class="container">
         <div class="row my-2">
             <div class="col-lg-10 order-lg-2">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+                        <a href="#" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a href="" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
+                        <a href="#messages" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
                     </li>
                     {% if app.user == user %}
                     <li class="nav-item">
-                        <a href="" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
+                        <a href="#edit" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -24,42 +25,33 @@
                         <h4 class="mb-4">{{ user.username }}</h4>
                         <div class="row">
                             <div class="col-md-4">
-                                <h5>A propos</h5>
+                                <h5>About</h5>
                                 <p>
                                     {{ user.bio }}
+                                </p>
+                                <p>
+                                    Joined on {{ user.createdAt|date('m/d/Y') }}
                                 </p>
                             </div>
                             <div class="col-md-8">
                                 <h5><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
                                 <table class="table table-sm table-hover table-striped">
                                     <tbody>
-                                    <tr>
-                                        <td>
-                                            <strong>Abby</strong> joined ACME Project Team in
-                                            <strong>`Collaboration`</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Gary</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Kensington</strong> deleted MyBoard3 in
-                                            <strong>`Discussions`</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>John</strong> deleted My Board1 in <strong>`Discussions`</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Skell</strong> deleted his post Look at Why this is.. in <strong>`Discussions`</strong>
-                                        </td>
-                                    </tr>
+                                    {% for post in user.posts %}
+                                        <tr>
+                                            <td>
+                                                {{ user.username }} posted in
+                                                <strong>
+                                                    <a href="{{ path('category_show', {'slug': post.subcategory.category.slug}) }}">{{ post.subcategory.category.name }}</a>
+                                                    /
+                                                    <a href="{{ path('subcategory_show', {'slug': post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
+                                                </strong>
+                                            </td>
+                                            <td align="right">
+                                                <small>{{ post.createdAt|timeago }}</small>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
@@ -113,52 +105,10 @@
                     </div>
                     {% if app.user == user %}
                     <div class="tab-pane" id="edit">
-                        {{ form_start(form, {'action': path('user_edit', {'username': user.username} )} ) }}
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Email</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.email) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Identifiant</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.username) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Biographie</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.bio) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Image</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.imageFile) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Mot de passe</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.plainpassword.first) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label">Répéter mot de passe</label>
-                            <div class="col-lg-9">
-                                {{ form_widget(form.plainpassword.second) }}
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label form-control-label"></label>
-                            <div class="col-lg-9">
-                                <input type="reset" class="btn btn-secondary" value="Cancel">
-                                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                            </div>
-                        </div>
-                        {{ form_rest(form) }}
-                        {{ form_end(form) }}
+                        {{ render(controller(
+                            'App\\Controller\\UserController::edit',
+                            { 'username': user.username }
+                        )) }}
                     </div>
                     {% endif %}
                 </div>
@@ -173,4 +123,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#user_imageFile_file').on('change', function () {
+            var filePath = $(this).val();
+            fileSplit = filePath.split('\\');
+            fileName = fileSplit[fileSplit.length - 1];
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
 {% endblock %}
