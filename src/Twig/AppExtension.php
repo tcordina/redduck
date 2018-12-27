@@ -4,14 +4,22 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension
 {
     public function getFilters()
     {
-        return array(
+        return [
             new TwigFilter('timeago', array($this, 'timeAgo')),
-        );
+        ];
+    }
+
+    public function getTests()
+    {
+        return [
+            'instanceof' => new TwigTest('instanceof', [$this, 'isInstanceof'])
+        ];
     }
 
     public function timeAgo($datetime)
@@ -35,5 +43,9 @@ class AppExtension extends AbstractExtension
                 (($numberOfUnits>1) ? $numberOfUnits : 'a')
                 .' '.$val.(($numberOfUnits>1) ? 's' : '').' ago';
         }
+    }
+
+    public function isInstanceof($var, $instance) {
+        return  $var instanceof $instance;
     }
 }

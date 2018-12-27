@@ -65,8 +65,11 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $request->get('user'))->add('bio');
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $encoder->encodePassword($user, $user->getPlainpassword());
-            $user->setPassword($password);
+            if (trim($user->getPlainpassword()) != '') {
+                $password = $encoder->encodePassword($user, $user->getPlainpassword());
+                $user->setPassword($password);
+            }
+            $user->setUpdatedAt(new \DateTime('now'));
             try {
                 $this->getDoctrine()->getManager()->flush();
                 $this->addFlash('success', 'Profile successfully updated.');
@@ -81,18 +84,17 @@ class UserController extends AbstractController
             }
         }
 
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
+        return $this->render('user/edit.html.twig', ['user' => $user,
+            'form' => $form->createView(),]);
     }
 
     /**
      * @Route("/{id}", name="user_delete", methods="DELETE")
      */
-    public function delete(Request $request, User $user): Response
+    public
+    function delete(Request $request, User $user): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($user);
             $em->flush();

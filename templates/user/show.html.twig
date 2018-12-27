@@ -14,7 +14,7 @@
                     <li class="nav-item">
                         <a href="#messages" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
                     </li>
-                    {% if app.user == user %}
+                    {% if app.user.id == user.id %}
                     <li class="nav-item">
                         <a href="#edit" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
                     </li>
@@ -22,9 +22,9 @@
                 </ul>
                 <div class="tab-content py-4">
                     <div class="tab-pane active" id="profile">
-                        <h4 class="mb-4">{{ user.username }}</h4>
                         <div class="row">
                             <div class="col-md-4">
+                                <h4 class="mb-4">{{ user.username }}</h4>
                                 <h5>About</h5>
                                 <p>
                                     {{ user.bio }}
@@ -37,20 +37,38 @@
                                 <h5><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
                                 <table class="table table-sm table-hover table-striped">
                                     <tbody>
-                                    {% for post in user.posts %}
+                                    {% for record in user.activity %}
+                                        {% if record is instanceof('App\\Entity\\Post') %}
                                         <tr>
                                             <td>
                                                 {{ user.username }} posted in
                                                 <strong>
-                                                    <a href="{{ path('category_show', {'slug': post.subcategory.category.slug}) }}">{{ post.subcategory.category.name }}</a>
+                                                    <a href="{{ path('category_show', {'slug': record.subcategory.category.slug}) }}">{{ record.subcategory.category.name }}</a>
                                                     /
-                                                    <a href="{{ path('subcategory_show', {'slug': post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
+                                                    <a href="{{ path('subcategory_show', {'slug': record.subcategory.slug}) }}">{{ record.subcategory.name }}</a>
                                                 </strong>
                                             </td>
                                             <td align="right">
-                                                <small>{{ post.createdAt|timeago }}</small>
+                                                <a href="{{ path('post_show', {'id': record.id, 'slug': record.slug}) }}"><small>{{ record.createdAt|timeago }}</small></a>
                                             </td>
                                         </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td>
+                                                {{ user.username }} commented on
+                                                <strong>
+                                                    <a href="{{ path('category_show', {'slug': record.post.subcategory.category.slug}) }}">{{ record.post.subcategory.category.name }}</a>
+                                                    /
+                                                    <a href="{{ path('subcategory_show', {'slug': record.post.subcategory.slug}) }}">{{ record.post.subcategory.name }}</a>
+                                                    /
+                                                    <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}">{{ record.post.title|length > 20 ? record.post.title|slice(0,20) ~ '...' : record.post.title }}</a>
+                                                </strong>
+                                            </td>
+                                            <td align="right">
+                                                <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}"><small>{{ record.createdAt|timeago }}</small></a>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
                                     {% endfor %}
                                     </tbody>
                                 </table>
@@ -103,7 +121,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {% if app.user == user %}
+                    {% if app.user.id == user.id %}
                     <div class="tab-pane" id="edit">
                         {{ render(controller(
                             'App\\Controller\\UserController::edit',
@@ -115,7 +133,7 @@
             </div>
             <div class="col-lg-2 order-lg-1 text-center">
                 {% if(user.image is not null) %}
-                    <img src="{{ asset('uploads/images/posts/' ~ user.image) }}"
+                    <img src="{{ asset('uploads/images/users/' ~ user.image) }}"
                          class="mx-auto img-fluid img-circle d-block" alt="avatar" width="400">
                 {% else %}
                     <img src="//placehold.it/150" class="mx-auto img-fluid img-circle d-block" alt="avatar">

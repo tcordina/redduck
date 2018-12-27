@@ -41,6 +41,7 @@ class MessageController extends AbstractController
 
             return $this->redirectToRoute('post_show', [
                 'id' => $post->getId(),
+                'slug' => $post->getSlug(),
             ]);
         }
 

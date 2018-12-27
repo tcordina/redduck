@@ -38,9 +38,7 @@ class PostController extends AbstractController
             $slug = str_replace('\'', '', $slug);
             $em = $this->getDoctrine()->getManager();
             $post->setAuthor($this->getUser())
-                ->setSlug($slug)
-                ->setCreatedAt(new \DateTime('now'))
-                ->setUpdatedAt(null);
+                ->setSlug($slug);
             $em->persist($post);
             $em->flush();
 
