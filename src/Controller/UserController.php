@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
- * @Route("/user")
+ * @Route("/u")
  */
 class UserController extends AbstractController
 {
@@ -33,24 +33,8 @@ class UserController extends AbstractController
      */
     public function show(User $user): Response
     {
-        $form = $this->createForm(UserType::class, $user)
-            ->remove('plainpassword')
-            ->add('bio', TextareaType::class, [
-                'required' => false,
-            ])
-            ->add('plainpassword', RepeatedType::class, [
-                'required' => false,
-                'type' => PasswordType::class,
-                'first_options' => [
-                    'label' => 'Mot de passe',
-                ],
-                'second_options' => [
-                    'label' => 'Répéter mot de passe',
-                ],
-            ]);
         return $this->render('user/show.html.twig', [
             'user' => $user,
-            'form' => $form->createView(),
         ]);
     }
 
@@ -85,7 +69,8 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/edit.html.twig', ['user' => $user,
-            'form' => $form->createView(),]);
+            'form' => $form->createView()
+            ]);
     }
 
     /**

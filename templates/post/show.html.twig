@@ -5,8 +5,10 @@
 {% block body %}
     <div class="container mt-2">
         <span>
-            <a class="badge badge-primary" href="{{ path('subcategory_show',{'slug':post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
-            posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">{{ post.author.username }}</a>
+            <a class="badge badge-primary"
+               href="{{ path('subcategory_show',{'slug':post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
+            posted by <a
+                    href="{{ path('user_show', {'username': post.author.username}) }}">{{ post.author.username }}</a>
         </span>
         <h1 class="mt-2">{{ post.title }}</h1>
         <p>{{ post.createdAt ? post.createdAt|date('d/m/Y à H:i:s') : '' }}</p>
@@ -17,17 +19,22 @@
         {% endif %}
         <br/><br/>
         {% if app.user %}
-            Commenter en tant que {{ app.user.username }}
+            Comment as {{ app.user.username }}
             {{ render(url('message_new', {'post': post.id})) }}
         {% else %}
-            <a href="{{ path('security_login') }}">Connectez-vous</a> pour commenter.
+            <div class="mt-4">
+                <span>What are your thoughts ? Log in or Sign up.</span>
+                <span>
+                    <a href="{{ path('security_login') }}" class="btn btn-navbar btn-outline-primary">LOG IN</a>
+                    <a href="{{ path('security_register') }}" class="btn btn-navbar btn-primary">SIGN UP</a>
+                </span>
+            </div>
         {% endif %}
         <br/>
         <br/><br/>
         <div id="comments">
             {{ render(controller('App\\Controller\\MessageController::index')) }}
         </div>
-        <a href="{{ path('post_index') }}">back to list</a>
         <br/>
         <a href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}">edit</a>
 

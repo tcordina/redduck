@@ -1,35 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5">
+<nav class="navbar navbar-expand-lg mb-5" style="border-bottom: 1px solid rgba(0,0,0,0.1)">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
             aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" href="#">Redduck</a>
+        <a class="navbar-brand" href="{{ path('home') }}">Redduck</a>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ path('home') }}">Home</a>
-            </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ path('category_index') }}">Catégories</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('subcategory_index') }}">Sous-catégories</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('post_index') }}">Posts</a>
+                <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('search') }}">
+                    <div class="input-group">
+                        <input class="form-control" name="search" type="search" placeholder="Search" aria-label="Search"
+                               {% if searchQuery is defined %}value="{{ searchQuery }}"{% endif %}>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </li>
         </ul>
+        {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="{{ path('security_login') }}" class="btn btn-navbar btn-outline-primary">LOG IN</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('security_register') }}" class="btn btn-navbar btn-primary">SIGN UP</a>
+            </li>
+        </ul>
+        {% endif %}
         <ul class="navbar-nav navbar-right">
             {% if app.user is not null %}
                 <li class="nav-item active">
-                    <a href="{{ path('user_show', {'username': app.user.username}) }}" class="nav-link">Account</a>
+                    <a href="{{ path('user_show', {'username': app.user.username}) }}"
+                       class="btn btn-outline-secondary" title="account">
+                        <i class="fas fa-user"></i>
+                    </a>
                 </li>
             {% endif %}
-            <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('search') }}">
-                <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search"
-                       {% if searchQuery is defined %}value="{{ searchQuery }}"{% endif %}>
-                <button class="btn btn-default my-2 my-sm-0" type="submit">Search</button>
-            </form>
         </ul>
     </div>
 </nav>

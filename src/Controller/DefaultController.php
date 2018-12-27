@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Post;
 use App\Entity\SubCategory;
+use App\Entity\User;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -71,20 +72,30 @@ class DefaultController extends AbstractController
             ->select('p')
             ->from(Post::class, 'p')
             ->leftJoin('p.author', 'a')
+            ->where('p.title LIKE :query')
             ->orWhere('a.username LIKE :query')
-            ->orWhere('p.title LIKE :query')
             ->orWhere('p.slug LIKE :query')
             ->orderBy('p.createdAt', 'DESC')
             ->setParameter('query', '%' . $query . '%')
             ->getQuery()
             ->getResult();
 
-        $resultsCount = count($categories) + count($subcategories) + count($posts);
+        $users = $qb
+            ->select('u')
+            ->from(User::class, 'u')
+            ->where('u.username LIKE :query')
+            ->orderBy('u.username', 'ASC')
+            ->setParameter('query', '%' . $query . '%')
+            ->getQuery()
+            ->getResult();
+
+        $resultsCount = count($categories) + count($subcategories) + count($posts) + count($users);
 
         return $this->render('default/searchresult.html.twig', [
             'categories' => $categories,
             'subcategories' => $subcategories,
             'posts' => $posts,
+            'users' => $users,
             'searchQuery' => $query,
             'resultsCount' => $resultsCount,
         ]);

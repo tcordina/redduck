@@ -5,7 +5,7 @@
 {% block body %}
     <div class="text-center" id="signin-wrapper">
         <form method="post" action="{{ path('security_login') }}" class="form-signin">
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
@@ -19,11 +19,9 @@
                     </div>
                 {% endfor %}
             {% endfor %}
-            <label for="inputEmail" class="sr-only">Email</label>
-            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control"
+            <input type="email" value="{{ last_username }}" name="email" class="form-control"
                    placeholder="Email" required autofocus>
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password"
+            <input type="password" name="password" class="form-control" placeholder="Password"
                    required>
             <div class="checkbox mb-3">
                 <label>

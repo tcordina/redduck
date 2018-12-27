@@ -12,11 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @Route("/post")
+ * @Route("/p")
  */
 class PostController extends AbstractController
 {
-    /**
+    /*
      * @Route("/", name="post_index", methods="GET")
      */
     public function index(PostRepository $postRepository): Response

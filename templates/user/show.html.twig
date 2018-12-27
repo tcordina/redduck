@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ user.username }} - profil{% endblock %}
+{% block title %}{{ user.username }} - profile{% endblock %}
 
 {% block body %}
-    {{ dump(user.activity) }}
     <div class="container">
         <div class="row my-2">
             <div class="col-lg-10 order-lg-2">
@@ -12,11 +11,11 @@
                         <a href="#" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#messages" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
+                        <a href="#" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
                     </li>
                     {% if app.user.id == user.id %}
                     <li class="nav-item">
-                        <a href="#edit" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
+                        <a href="#" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
                     </li>
                     {% endif %}
                 </ul>

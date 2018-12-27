@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/sub")
+ * @Route("/r")
  */
 class SubCategoryController extends AbstractController
 {
-    /**
+    /*
      * @Route("/", name="subcategory_index", methods="GET")
      */
     public function index(SubCategoryRepository $subCategoryRepository): Response

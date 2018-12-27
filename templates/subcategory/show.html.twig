@@ -4,34 +4,45 @@
 
 {% block body %}
     <div class="container">
-        <h1>{{ subcategory.name }}</h1>
-
-        {% for post in subcategory.posts %}
-            <div class="post-container" onclick="location.href='{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}';">
-                <div class="row list-row">
-                    <div class="col-1 buttons-vote" align="right">
-                        <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
-                                onclick="upVote(this, event, {{ post.id }})">
-                            <i class="fas fa-sort-up"></i>
-                        </button>
-                        <span class="karma-count">{{ post.upvotes|length - post.downvotes|length }}</span>
-                        <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
-                                onclick="downVote(this, event, {{ post.id }})">
-                            <i class="fas fa-sort-down"></i>
-                        </button>
-                    </div>
-                    <div class="col-1">
-                        <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="55">
-                    </div>
-                    <div class="col-10">
-                        <span class="post-title">{{ post.title }}</span>
-                        <span class="post-author">posté par {{ post.author.username }}</span><br/>
-                        <span><i class="fas fa-comment-alt" style=""></i>&nbsp;{{ post.messages|length }}</span>
+        <h2 class="mt-4">{{ subcategory.name }}</h2>
+        <div class="list-group">
+            {% for post in subcategory.posts %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="row">
+                        <div class="col-1 buttons-vote" align="center">
+                            <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
+                                    onclick="upVote(this, event, {{ post.id }})">
+                                <i class="fas fa-sort-up"></i>
+                            </button>
+                            <span class="karma-count">{{ post.upvotes|length - post.downvotes|length }}</span>
+                            <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
+                                    onclick="downVote(this, event, {{ post.id }})">
+                                <i class="fas fa-sort-down"></i>
+                            </button>
+                        </div>
+                        <div class="col-1">
+                            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="80">
+                        </div>
+                        <div class="col-10">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">
+                                    <a href="{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}">{{ post.title }}</a>
+                                </h5>
+                                <small>
+                                    {{ post.createdAt|timeago }}
+                                </small>
+                            </div>
+                            <p class="mb-1">Posted by <a
+                                        href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                            </p>
+                            <small>
+                                <span><i class="far fa-comment-alt"></i>&nbsp;{{ post.messages|length }}</span>
+                            </small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-        <a href="{{ path('subcategory_index') }}">back to list</a>
+            {% endfor %}
+        </div>
 
         <a href="{{ path('subcategory_edit', {'slug': subcategory.slug}) }}">edit</a>
 
@@ -44,6 +55,7 @@
         function upVote(btn, event, postId) {
             event.stopImmediatePropagation();
             postId = postId.toString();
+            console.log($(btn).parent().find('.karma-count').text())
             let url = '{{ path('post_upvote', {'id': 'postId'}) }}'
             url = url.replace('postId', postId);
             $.ajax({
@@ -51,11 +63,17 @@
                 url: url,
                 type: 'text',
                 success: function (res) {
+                    let curKarma = $(btn).parent().find('.karma-count').text()
                     if (res == 'added') {
                         $(btn).addClass('text-info')
-                        $(btn).next().removeClass('text-warning');
+                        if ($(btn).next().next().hasClass('text-warning')) {
+                            curKarma++
+                        }
+                        $(btn).next().next().removeClass('text-warning');
+                        $(btn).parent().find('.karma-count').text(+curKarma + 1)
                     } else if (res == 'removed') {
                         $(btn).removeClass('text-info')
+                        $(btn).parent().find('.karma-count').text(+curKarma - 1)
                     } else if (res == 'login') {
                         location.href = '{{ path('security_login') }}'
                     }
@@ -73,11 +91,17 @@
                 url: url,
                 type: 'text',
                 success: function (res) {
+                    let curKarma = $(btn).parent().find('.karma-count').text()
                     if (res == 'added') {
                         $(btn).addClass('text-warning')
-                        $(btn).prev().removeClass('text-info');
+                        if ($(btn).prev().prev().hasClass('text-info')) {
+                            curKarma-=1
+                        }
+                        $(btn).prev().prev().removeClass('text-info');
+                        $(btn).parent().find('.karma-count').text(+curKarma - 1)
                     } else if (res == 'removed') {
                         $(btn).removeClass('text-warning')
+                        $(btn).parent().find('.karma-count').text(+curKarma + 1)
                     } else if (res == 'login') {
                         location.href = '{{ path('security_login') }}'
                     }

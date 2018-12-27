@@ -99,6 +99,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime('now');
+        $this->karma = 0;
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->upvotedposts = new ArrayCollection();
@@ -333,6 +334,17 @@ class User implements UserInterface
         $this->bio = $bio;
 
         return $this;
+    }
+
+    public function getKarma(): ?int
+    {
+        $posts = $this->getPosts();
+        $karma = 0;
+        foreach ($posts as $post) {
+            $karma += count($post->getUpvotes()->toArray());
+            $karma -= count($post->getDownvotes()->toArray());
+        }
+        return $karma;
     }
 
     /**
