@@ -1,13 +1,27 @@
-{% for message in messages %}
-    <div class="row mt-2">
-        <p style="width: 100%;"><b>{{ message.author.username }}</b>: {{ message.content }}</p>
-        {% if(message.image is not null) %}
-            <img class="img-fluid" src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="" width="150">
-        {% endif %}
+<div class="comment-wrapper">
+    <div class="panel panel-info">
+        <div class="panel-body">
+            <ul class="media-list">
+                {% for message in messages %}
+                <li class="media">
+                    <a href="{{ path('user_show', {'username':message.author.username}) }}" class="float-left">
+                        <img src="{{ asset('uploads/images/users/' ~ message.author.image) }}" alt="" class="rounded-circle">
+                    </a>
+                    <div class="media-body ml-2">
+                                <span class="text-muted float-right">
+                                    <small class="text-muted">{{ message.createdAt|timeago }}</small>
+                                </span>
+                        <strong class="text-success">u/{{ message.author.username }}</strong>
+                        <p>{{ message.content }}</p>
+                        {% if message.image is not null %}
+                            <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-    <hr class="my-1">
-{% else %}
-    <p>Pas de commentaires pour le moment</p>
-{% endfor %}
+</div>
 
 

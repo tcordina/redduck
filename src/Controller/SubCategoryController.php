@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\SubCategory;
 use App\Form\SubCategoryType;
 use App\Repository\SubCategoryRepository;
@@ -24,23 +25,27 @@ class SubCategoryController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="subcategory_new", methods="GET|POST")
+     * @Route("/new/{category}", name="subcategory_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, Category $category): Response
     {
         $subCategory = new SubCategory();
-        $form = $this->createForm(SubCategoryType::class, $subCategory);
+        $form = $this->createForm(SubCategoryType::class, $subCategory)->remove('category');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = str_replace(' ', '-', $subCategory->getName());
             $slug = str_replace('\'', '', $slug);
-            $subCategory->setSlug(strtolower($slug));
+            $subCategory
+                ->setSlug(strtolower($slug))
+                ->setCategory($category);
             $em = $this->getDoctrine()->getManager();
             $em->persist($subCategory);
             $em->flush();
 
-            return $this->redirectToRoute('subcategory_index');
+            return $this->redirectToRoute('category_show', [
+                'slug' => $category->getSlug(),
+            ]);
         }
 
         return $this->render('subcategory/new.html.twig', [

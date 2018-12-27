@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\SubCategory;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,24 +26,27 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="post_new", methods="GET|POST")
+     * @Route("/new/{subcategory}", name="post_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, SubCategory $subcategory): Response
     {
         $post = new Post();
-        $form = $this->createForm(PostType::class, $post);
+        $form = $this->createForm(PostType::class, $post)->remove('subcategory');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = str_replace(' ', '-', $post->getTitle());
             $slug = str_replace('\'', '', $slug);
             $em = $this->getDoctrine()->getManager();
-            $post->setAuthor($this->getUser())
+            $post->setSubcategory($subcategory)
+                ->setAuthor($this->getUser())
                 ->setSlug($slug);
             $em->persist($post);
             $em->flush();
 
-            return $this->redirectToRoute('post_index');
+            return $this->redirectToRoute('subcategory_show', [
+                'slug' => $subcategory->getSlug(),
+            ]);
         }
 
         return $this->render('post/new.html.twig', [

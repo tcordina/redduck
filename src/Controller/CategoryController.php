@@ -42,7 +42,9 @@ class CategoryController extends AbstractController
             $em->persist($category);
             $em->flush();
 
-            return $this->redirectToRoute('category_index');
+            return $this->redirectToRoute('category_show', [
+                'slug' => $category->getSlug(),
+            ]);
         }
 
         return $this->render('category/new.html.twig', [
@@ -95,6 +97,6 @@ class CategoryController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('category_index');
+        return $this->redirectToRoute('home');
     }
 }

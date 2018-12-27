@@ -3,25 +3,26 @@
 {% block title %}{{ category.name }} - posts{% endblock %}
 
 {% block body %}
-    <h2 class="mt-4">{{ category.name }}</h2>
+    <h2 class="mt-4">c/{{ category.name }}</h2>
     <div class="list-group">
         {% for subcategorie in category.subcategories %}
             <a href="{{ path('subcategory_show', {'slug': subcategorie.slug}) }}"
                class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ subcategorie.name }}</h5>
+                    <h5 class="mb-1">r/{{ subcategorie.name }}</h5>
                     <small>
                         {{ subcategorie.posts|length }} posts
                     </small>
                 </div>
                 <p class="mb-1">{{ subcategorie.description|length > 50 ? subcategorie.description|slice(0,50) ~ '...' : subcategorie.description }}</p>
                 {% set posts = subcategorie.posts|reverse %}
-                <small>last post {{ posts[0].createdAt|timeago }}</small>
+                <small>{{ posts is not empty ? 'Last post ' ~ posts[0].createdAt|timeago : ' ' }}</small>
             </a>
         {% endfor %}
     </div>
 
     <a href="{{ path('category_edit', {'slug': category.slug}) }}">edit</a>
+    <a href="{{ path('subcategory_new', {'category': category.id}) }}">New</a>
 
     {{ include('category/_delete_form.html.twig') }}
 {% endblock %}
