@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use App\Entity\SubCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -17,6 +18,37 @@ class PostRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Post::class);
+    }
+
+    public function findByHot(SubCategory $subcategory)
+    {
+        $date = (new \DateTime('now'))->modify('-72 hours');
+        return $this->createQueryBuilder('p')
+            ->addSelect('COUNT(u.id) AS HIDDEN uvcount')
+            ->join('p.upvotes', 'u')
+            ->groupBy('p.id')
+            ->where('p.subcategory = :sub')
+            ->andWhere('p.createdAt > :date')
+            ->setParameter('sub', $subcategory)
+            ->setParameter('date', $date)
+            ->orderBy('uvcount', 'DESC')
+            ->setMaxResults(25)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByTop($subcategory)
+    {
+        return $this->createQueryBuilder('p')
+            ->addSelect('COUNT(u.id) AS HIDDEN uvcount')
+            ->join('p.upvotes', 'u')
+            ->groupBy('p.id')
+            ->where('p.subcategory = :sub')
+            ->setParameter('sub', $subcategory)
+            ->orderBy('uvcount', 'DESC')
+            ->setMaxResults(25)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

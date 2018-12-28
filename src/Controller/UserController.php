@@ -7,8 +7,6 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\DBALException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +44,7 @@ class UserController extends AbstractController
         if ($this->getUser()->getId() !== $user->getId()) {
             throw $this->createAccessDeniedException();
         }
-        $form = $this->createForm(UserType::class, $request->get('user'))->add('bio');
+        $form = $this->createForm(UserType::class, $request->get('user'))->add('bio', TextareaType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if (trim($user->getPlainpassword()) != '') {

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ user.username }} - profile{% endblock %}
+{% block title %}u/{{ user.username }} - profile{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -13,7 +13,7 @@
                     <li class="nav-item">
                         <a href="#" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
                     </li>
-                    {% if app.user.id == user.id %}
+                    {% if app.user == user %}
                     <li class="nav-item">
                         <a href="#" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
                     </li>
@@ -23,17 +23,18 @@
                     <div class="tab-pane active" id="profile">
                         <div class="row">
                             <div class="col-md-4">
-                                <h4 class="mb-4">{{ user.username }}</h4>
+                                <h4 class="mb-4">u/{{ user.username }}</h4>
                                 <h5>About</h5>
                                 <p>
                                     {{ user.bio }}
                                 </p>
-                                <p>
+                                <small>
                                     Joined on {{ user.createdAt|date('m/d/Y') }}
-                                </p>
+                                </small>
                             </div>
                             <div class="col-md-8">
                                 <h5><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
+                                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                                 <table class="table table-sm table-hover table-striped">
                                     <tbody>
                                     {% for record in user.activity %}
@@ -71,37 +72,35 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
+                                {% else %}
+                                    <p>
+                                        <a href="{{ path('security_login') }}">Log in</a>
+                                        to see their recent activity
+                                    </p>
+                                {% endif %}
                             </div>
                         </div>
                         <!--/row-->
                     </div>
                     <div class="tab-pane" id="messages">
-                        <div class="alert alert-info alert-dismissable">
-                            <a class="panel-close close" data-dismiss="alert">×</a> This is an <strong>.alert</strong>.
-                            Use
-                            this to show important messages to the user.
-                        </div>
                         <table class="table table-hover table-striped">
                             <tbody>
                             <tr>
                                 <td>
-                                    <span class="float-right font-weight-bold">3 hrs ago</span> Here is your a link to
-                                    the
-                                    latest summary report from the..
+                                    <span class="float-right font-weight-bold">{{ user.posts|length }}</span>
+                                    Total number of posts
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <span class="float-right font-weight-bold">Yesterday</span> There has been a request
-                                    on
-                                    your account since that was..
+                                    <span class="float-right font-weight-bold">{{ user.messages|length }}</span>
+                                    Total number of comments
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <span class="float-right font-weight-bold">9/10</span> Porttitor vitae ultrices
-                                    quis,
-                                    dapibus id dolor. Morbi venenatis lacinia rhoncus.
+                                    <span class="float-right font-weight-bold">{{ user.upvotedposts|length + user.downvotedposts|length }}</span>
+                                    Total number of votes
                                 </td>
                             </tr>
                             <tr>
@@ -120,7 +119,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {% if app.user.id == user.id %}
+                    {% if app.user == user %}
                     <div class="tab-pane" id="edit">
                         {{ render(controller(
                             'App\\Controller\\UserController::edit',

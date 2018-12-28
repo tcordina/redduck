@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\SubCategory;
 use App\Form\SubCategoryType;
+use App\Repository\PostRepository;
 use App\Repository\SubCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,9 +58,20 @@ class SubCategoryController extends AbstractController
     /**
      * @Route("/{slug}", name="subcategory_show", methods="GET")
      */
-    public function show(SubCategory $subCategory): Response
+    public function show(Request $request, SubCategory $subCategory, PostRepository $postRepository): Response
     {
-        return $this->render('subcategory/show.html.twig', ['subcategory' => $subCategory]);
+        $sort = strtolower(trim($request->query->get('sort')));
+        if ($sort === 'hot') {
+            $posts = $postRepository->findByHot($subCategory);
+        } elseif ($sort === 'top') {
+            $posts = $postRepository->findByTop($subCategory);
+        } else {
+            $posts = array_reverse($postRepository->findAll());
+        }
+        return $this->render('subcategory/show.html.twig', [
+            'subcategory' => $subCategory,
+            'posts' => $posts,
+        ]);
     }
 
     /**

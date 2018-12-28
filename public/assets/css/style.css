@@ -119,10 +119,6 @@ body {
     overflow: auto;
 }
 
-.comment-wrapper .media-list {
-    margin-block-end: 0;
-}
-
 .comment-wrapper .media-list .media img {
     width: 64px;
     height: 64px;
@@ -130,7 +126,7 @@ body {
 }
 
 .comment-wrapper .media-list .media {
-    margin-bottom: 25px;
+    margin-bottom: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 5px 20px;
     border-radius: 4px;

@@ -5,8 +5,30 @@
 {% block body %}
     <div class="container">
         <h2 class="mt-4">{{ subcategory.name }}</h2>
-        <div class="list-group">
-            {% for post in subcategory.posts %}
+        <div class="dropdown">
+            {% set sort = app.request.query.get('sort') is not null ? app.request.query.get('sort') : 'new' %}
+            SORT&nbsp;
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ sort|upper }}
+            </button>
+            <div class="dropdown-menu secondary" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item {{ sort == 'hot' ? 'active bg-secondary' : '' }}"
+                   href="{{ path('subcategory_show', {'slug':subcategory.slug, 'sort': 'hot'}) }}">
+                    <i class="fas fa-fire"></i>&nbsp;&nbsp;HOT
+                </a>
+                <a class="dropdown-item {{ sort == 'new' ? 'active bg-secondary' : '' }}"
+                   href="{{ path('subcategory_show', {'slug':subcategory.slug, 'sort': 'new'}) }}">
+                    <i class="fas fa-certificate"></i>&nbsp;&nbsp;NEW
+                </a>
+                <a class="dropdown-item {{ sort == 'top' ? 'active bg-secondary' : '' }}"
+                   href="{{ path('subcategory_show', {'slug':subcategory.slug, 'sort': 'top'}) }}">
+                    <i class="fas fa-arrow-up"></i>&nbsp;&nbsp;TOP
+                </a>
+            </div>
+        </div>
+        <div class="list-group mt-4">
+            {% for post in posts %}
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="row">
                         <div class="col-1 buttons-vote" align="center">
@@ -53,6 +75,11 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        $(document).ready(function () {
+            let html = $('.dropdown-menu > .active').html();
+            $('#dropdownMenuButton').html(html);
+        })
+
         function upVote(btn, event, postId) {
             event.stopImmediatePropagation();
             postId = postId.toString();
@@ -96,7 +123,7 @@
                     if (res == 'added') {
                         $(btn).addClass('text-warning')
                         if ($(btn).prev().prev().hasClass('text-info')) {
-                            curKarma-=1
+                            curKarma -= 1
                         }
                         $(btn).prev().prev().removeClass('text-info');
                         $(btn).parent().find('.karma-count').text(+curKarma - 1)

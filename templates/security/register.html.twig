@@ -21,6 +21,9 @@
         {{ form_widget(form.plainpassword.first) }}
         {{ form_widget(form.plainpassword.second) }}
         <button type="submit" class="btn btn-lg btn-primary btn-block">Sign up</button>
+        <p class="mt-2">
+            Already signed up ? <a href="{{ path('security_register') }}">Log in now !</a>
+        </p>
         {{ form_end(form) }}
     </div>
 {% endblock %}
