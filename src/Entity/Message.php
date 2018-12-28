@@ -49,6 +49,11 @@ class Message
     private $imageFile;
 
     /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $ytlink;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdAt;
@@ -154,6 +159,18 @@ class Message
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getYtlink(): ?string
+    {
+        return $this->ytlink;
+    }
+
+    public function setYtlink(?string $ytlink): self
+    {
+        $this->ytlink = $ytlink;
 
         return $this;
     }

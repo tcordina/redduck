@@ -3,6 +3,10 @@ body {
     font-family: 'IBM Plex Sans', sans-serif;
 }
 
+.main-container {
+    margin-top: 100px;
+}
+
 #signin-wrapper {
     display: -ms-flexbox;
     display: flex;
@@ -100,6 +104,23 @@ body {
     font-weight: 200;
 }
 
+.post-image {
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.post-image img {
+    height: 400px;
+}
+
+.post-content {
+    white-space: pre-line;
+}
+
+.buttons-vote * {
+    color: #5a6268;
+}
+
 .buttons-vote button {
     background: none;
     border: none;
@@ -107,12 +128,12 @@ body {
     padding: 0;
     cursor: pointer;
     display: block;
+
 }
 
 .buttons-vote i {
     font-size: 30px;
-    line-height: 0.4 !important;
-    display: block;
+    display: block
 }
 
 .comment-wrapper .panel-body {

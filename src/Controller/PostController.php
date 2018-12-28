@@ -37,10 +37,12 @@ class PostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $slug = str_replace(' ', '-', $post->getTitle());
             $slug = str_replace('\'', '', $slug);
+            $ytlink = $this->getYtLink($post->getContent());
             $em = $this->getDoctrine()->getManager();
             $post->setSubcategory($subcategory)
                 ->setAuthor($this->getUser())
-                ->setSlug($slug);
+                ->setSlug($slug)
+                ->setYtlink($ytlink);
             $em->persist($post);
             $em->flush();
 
@@ -72,9 +74,18 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $slug = str_replace(' ', '-', $post->getTitle());
+            $slug = str_replace('\'', '', $slug);
+            $ytlink = $this->getYtLink($post->getContent());
+            $em = $this->getDoctrine()->getManager();
+            $post->setSlug($slug)->setYtlink($ytlink);
+            $em->persist($post);
+            $em->flush();
 
-            return $this->redirectToRoute('post_index', ['id' => $post->getId()]);
+            return $this->redirectToRoute('post_edit', [
+                'id' => $post->getId(),
+                'slug' => $post->getSlug(),
+            ]);
         }
 
         return $this->render('post/edit.html.twig', [
@@ -143,5 +154,16 @@ class PostController extends AbstractController
         $em->persist($post);
         $em->flush();
         return new Response('added');
+    }
+
+    private function getYtLink($content)
+    {
+        preg_match_all('@(https?://)?(?:www\.)?(youtu(?:\.be/([-\w]+)|be\.com/watch\?v=([-\w]+)))\S*@im', $content, $aMatches);
+        if (isset($aMatches[0][0])) {
+            $ytlink = explode('?v=', $aMatches[0][0])[1];
+        } else {
+            $ytlink = null;
+        }
+        return $ytlink;
     }
 }

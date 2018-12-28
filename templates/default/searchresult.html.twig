@@ -12,7 +12,7 @@
                     <a href="{{ path('category_show', {'slug': categorie.slug}) }}"
                        class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ categorie.name }}</h5>
+                            <h5 class="mb-1">c/{{ categorie.name }}</h5>
                             <small>
                                 {% set postCount = 0 %}
                                 {% for subcategorie in categorie.subcategories %}
@@ -34,7 +34,7 @@
                     <a href="{{ path('subcategory_show', {'slug': subcategorie.slug}) }}"
                        class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ subcategorie.name }}</h5>
+                            <h5 class="mb-1">r/{{ subcategorie.name }}</h5>
                             <small>
                                 {{ subcategorie.posts|length }} posts
                             </small>
@@ -62,8 +62,8 @@
                                         {{ post.createdAt|timeago }}
                                     </small>
                                 </div>
-                                <p class="mb-1">{{ post.content|length > 50 ? post.content|slice(0,50) ~ '...' : post.content }}</p>
-                                <!--<small>afficher le karma</small>-->
+                                <div>Posted by u/{{ post.author.username }}</div>
+                                <div>{{ post.content|length > 50 ? post.content|slice(0,50) ~ '...' : post.content }}</div>
                             </div>
                         </div>
                     </a>

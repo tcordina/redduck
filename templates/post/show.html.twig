@@ -7,15 +7,31 @@
         <span>
             <a class="badge badge-primary"
                href="{{ path('subcategory_show',{'slug':post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
-            posted by <a
-                    href="{{ path('user_show', {'username': post.author.username}) }}">{{ post.author.username }}</a>
+            posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
         </span>
         <h1 class="mt-2">{{ post.title }}</h1>
         <p>{{ post.createdAt ? post.createdAt|date('m/d/Y - H:i') : '' }}</p>
         <hr>
-        <p>{{ post.content }}</p>
-        {% if(post.image is not null) %}
-            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" width="400">
+        <p class="post-content">{{ post.content|linkify|raw }}</p>
+        {% if post.image is not null %}
+            <div class="post-image row justify-content-center">
+                <div>
+                    <a href="{{ path('post_show', {'id':post.id, 'slug':post.slug}) }}">
+                        <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
+                    </a>
+                </div>
+            </div>
+        {% elseif post.ytlink is not null %}
+            <div class="row justify-content-center">
+                <div class="embed-responsive embed-responsive-16by9 col-10">
+                    <iframe class="embed-responsive-item"
+                            src="https://www.youtube.com/embed/{{ post.ytlink }}"
+                            frameborder="0"
+                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                            height="200" allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
         {% endif %}
         <br/><br/>
         {% if app.user %}
@@ -23,7 +39,7 @@
             {{ render(url('message_new', {'post': post.id})) }}
         {% else %}
             <div class="mt-4">
-                <span>What are your thoughts ? Log in or Sign up.</span>
+                <span class="mr-4">What are your thoughts ? Log in or Sign up.</span>
                 <span>
                     <a href="{{ path('security_login') }}" class="btn btn-navbar btn-outline-primary">LOG IN</a>
                     <a href="{{ path('security_register') }}" class="btn btn-navbar btn-primary">SIGN UP</a>
@@ -33,7 +49,7 @@
         <br/>
         <br/><br/>
         <div id="comments">
-            {{ render(controller('App\\Controller\\MessageController::index')) }}
+            {{ render(controller('App\\Controller\\MessageController::index', {'post': post})) }}
         </div>
         <br/>
         <a href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}">edit</a>

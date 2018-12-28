@@ -33,19 +33,16 @@
                     <div class="row">
                         <div class="col-1 buttons-vote" align="center">
                             <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
-                                    onclick="upVote(this, event, {{ post.id }})">
+                                    onclick="upVote(this, event, {{ post.id }})" title="upvote">
                                 <i class="fas fa-sort-up"></i>
                             </button>
                             <span class="karma-count">{{ post.upvotes|length - post.downvotes|length }}</span>
                             <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
-                                    onclick="downVote(this, event, {{ post.id }})">
+                                    onclick="downVote(this, event, {{ post.id }})" title="downvote">
                                 <i class="fas fa-sort-down"></i>
                             </button>
                         </div>
-                        <div class="col-1">
-                            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt="" height="80">
-                        </div>
-                        <div class="col-10">
+                        <div class="col-11">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <a href="{{ path('post_show', {'slug': post.slug, 'id': post.id}) }}">{{ post.title }}</a>
@@ -54,11 +51,34 @@
                                     {{ post.createdAt|timeago }}
                                 </small>
                             </div>
-                            <p class="mb-1">Posted by <a
+                            <p>
+                                Posted by <a
                                         href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
                             </p>
+                            {% if post.image is not null %}
+                                <div class="post-image row justify-content-center">
+                                    <div>
+                                        <a href="{{ path('post_show', {'id':post.id, 'slug':post.slug}) }}">
+                                            <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% elseif post.ytlink is not null %}
+                                <div class="row justify-content-center">
+                                    <div class="embed-responsive embed-responsive-16by9 col-10">
+                                        <iframe class="embed-responsive-item"
+                                                src="https://www.youtube.com/embed/{{ post.ytlink }}"
+                                                frameborder="0"
+                                                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                                                height="200" allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="post-content">{{ post.content|linkify|raw }}</p>
+                            {% endif %}
                             <small>
-                                <span><i class="far fa-comment-alt"></i>&nbsp;{{ post.messages|length }}</span>
+                                <span><i class="far fa-comment-alt"></i>&nbsp;{{ post.messages|length > 1 ? post.messages|length ~ ' comments' : post.messages|length ~ ' comment' }}</span>
                             </small>
                         </div>
                     </div>

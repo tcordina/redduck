@@ -56,6 +56,11 @@ class Post
     private $imageFile;
 
     /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $ytlink;
+
+    /**
      * @ORM\Column(type="text")
      */
     private $content;
@@ -295,6 +300,18 @@ class Post
             $this->downvotes->removeElement($downvote);
             $downvote->removeDownvotedpost($this);
         }
+
+        return $this;
+    }
+
+    public function getYtlink(): ?string
+    {
+        return $this->ytlink;
+    }
+
+    public function setYtlink(?string $ytlink): self
+    {
+        $this->ytlink = $ytlink;
 
         return $this;
     }

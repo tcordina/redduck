@@ -16,12 +16,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MessageController extends AbstractController
 {
-    /*
-     * @Route("/", name="message_index", methods="GET")
+    /**
+     * @Route("/{post}", name="message_index", methods="GET")
      */
-    public function index(MessageRepository $messageRepository): Response
+    public function index(Post $post, MessageRepository $messageRepository): Response
     {
-        return $this->render('message/index.html.twig', ['messages' => $messageRepository->findAll()]);
+        return $this->render('message/index.html.twig', [
+            'messages' => $messageRepository->findBy([
+                'post' => $post,
+            ])
+        ]);
     }
 
     /**
