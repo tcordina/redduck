@@ -5,9 +5,12 @@
 {% block body %}
     <h1>Edit Message</h1>
 
-    {{ include('message/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" form="form-comment-post" class="btn btn-primary">Update</button>
+    {{ form_end(form) }}
 
-    <a href="{{ path('message_index') }}">back to list</a>
+    <a class="btn btn-link" href="{{ path('post_show', {'id': message.post.id, 'slug': message.post.slug}) }}">Back to post</a>
 
     {{ include('message/_delete_form.html.twig') }}
 {% endblock %}

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -63,10 +65,22 @@ class Message
      */
     private $updatedAt;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="upvotedmessages")
+     */
+    private $upvotes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="downvotedmessages")
+     */
+    private $downvotes;
+
 
     public function __construct()
     {
         $this->createdAt = new \DateTime('now');
+        $this->upvotes = new ArrayCollection();
+        $this->downvotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -171,6 +185,62 @@ class Message
     public function setYtlink(?string $ytlink): self
     {
         $this->ytlink = $ytlink;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUpvotes(): Collection
+    {
+        return $this->upvotes;
+    }
+
+    public function addUpvote(User $upvote): self
+    {
+        if (!$this->upvotes->contains($upvote)) {
+            $this->upvotes[] = $upvote;
+            $upvote->addUpvotedmessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUpvote(User $upvote): self
+    {
+        if ($this->upvotes->contains($upvote)) {
+            $this->upvotes->removeElement($upvote);
+            $upvote->removeUpvotedmessage($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getDownvotes(): Collection
+    {
+        return $this->downvotes;
+    }
+
+    public function addDownvote(User $downvote): self
+    {
+        if (!$this->downvotes->contains($downvote)) {
+            $this->downvotes[] = $downvote;
+            $downvote->addDownvotedmessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDownvote(User $downvote): self
+    {
+        if ($this->downvotes->contains($downvote)) {
+            $this->downvotes->removeElement($downvote);
+            $downvote->removeDownvotedmessage($this);
+        }
 
         return $this;
     }

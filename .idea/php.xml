@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="PhpCodeSniffer">
-    <phpcs_settings>
-      <PhpCSConfiguration standards="MySource;PEAR;PHPCS;PSR1;PSR2;Squiz;Symfony2;Zend" tool_path="C:/xampp/php/pear/PHP/CodeSniffer/vendor/bin/phpcs" />
-    </phpcs_settings>
-  </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
-</project>

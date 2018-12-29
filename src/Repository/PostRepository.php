@@ -22,7 +22,7 @@ class PostRepository extends ServiceEntityRepository
 
     public function findByHot(SubCategory $subcategory)
     {
-        $date = (new \DateTime('now'))->modify('-72 hours');
+        $date = (new \DateTime('now'))->modify('-24 hours');
         return $this->createQueryBuilder('p')
             ->addSelect('COUNT(u.id) AS HIDDEN uvcount')
             ->join('p.upvotes', 'u')

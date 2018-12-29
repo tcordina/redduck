@@ -117,9 +117,14 @@ body {
     white-space: pre-line;
 }
 
-.buttons-vote * {
-    color: #5a6268;
+.buttons-vote {
+    position: relative;
+    top: 15px;
 }
+
+/*.buttons-vote * {
+    color: #5a6268;
+}*/
 
 .buttons-vote button {
     background: none;
@@ -128,11 +133,21 @@ body {
     padding: 0;
     cursor: pointer;
     display: block;
-
 }
 
 .buttons-vote i {
     font-size: 30px;
+    display: block
+}
+
+.buttons-vote-message {
+    top: 0;
+    left: -10px;
+}
+
+.buttons-vote-message i {
+    font-size: 30px;
+    line-height: 1;
     display: block
 }
 
@@ -171,9 +186,4 @@ body {
 .nav-item {
     margin-left: 10px;
     margin-right: 10px;
-}
-
-.buttons-vote {
-    position: relative;
-    top: 15px;
 }

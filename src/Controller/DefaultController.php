@@ -40,6 +40,19 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @Route("/setmoderator")
+     */
+    public function setModerator()
+    {
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $user->setRoles(['ROLE_MODERATOR']);
+        $em->persist($user);
+        $em->flush();
+        return new Response('Done');
+    }
+
+    /**
      * @Route("/search", name="search")
      */
     public function search(Request $request)

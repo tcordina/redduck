@@ -1,2 +1,6 @@
- {{ include('message/_form.html.twig') }}
-
+{% set post = app.request.attributes.get('_route_params')['post']  %}
+{{ form_start(form, {'attr': {'id': 'form-comment-post', 'action': path('message_new', {'post': post}) } }) }}
+    {{ form_widget(form.content) }}
+    {{ form_widget(form.imageFile) }}
+<button type="submit" form="form-comment-post" class="btn btn-primary">Comment</button>
+{{ form_end(form) }}

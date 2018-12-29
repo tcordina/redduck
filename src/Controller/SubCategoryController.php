@@ -7,6 +7,7 @@ use App\Entity\SubCategory;
 use App\Form\SubCategoryType;
 use App\Repository\PostRepository;
 use App\Repository\SubCategoryRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class SubCategoryController extends AbstractController
 
     /**
      * @Route("/new/{category}", name="subcategory_new", methods="GET|POST")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request, Category $category): Response
     {
@@ -76,6 +78,7 @@ class SubCategoryController extends AbstractController
 
     /**
      * @Route("/{slug}/edit", name="subcategory_edit", methods="GET|POST")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function edit(Request $request, SubCategory $subCategory): Response
     {
@@ -88,7 +91,7 @@ class SubCategoryController extends AbstractController
             $subCategory->setSlug(strtolower($slug));
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('subcategory_index', ['id' => $subCategory->getId()]);
+            return $this->redirectToRoute('subcategory_show', ['slug' => $subCategory->getSlug()]);
         }
 
         return $this->render('subcategory/edit.html.twig', [
@@ -99,15 +102,19 @@ class SubCategoryController extends AbstractController
 
     /**
      * @Route("/{slug}", name="subcategory_delete", methods="DELETE")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, SubCategory $subCategory): Response
     {
+        $category = $subCategory->getCategory();
         if ($this->isCsrfTokenValid('delete'.$subCategory->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($subCategory);
             $em->flush();
         }
 
-        return $this->redirectToRoute('subcategory_index');
+        return $this->redirectToRoute('category_show', [
+            'slug' => $category->getSlug(),
+        ]);
     }
 }

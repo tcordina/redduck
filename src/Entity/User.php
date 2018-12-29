@@ -63,15 +63,27 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="upvotes")
-     * @ORM\JoinTable(name="upvotes")
+     * @ORM\JoinTable(name="post_upvotes")
      */
     private $upvotedposts;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="downvotes")
-     * @ORM\JoinTable(name="downvotes")
+     * @ORM\JoinTable(name="post_downvotes")
      */
     private $downvotedposts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="upvotes")
+     * @ORM\JoinTable(name="message_upvotes")
+     */
+    private $upvotedmessages;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="downvotes")
+     * @ORM\JoinTable(name="message_downvotes")
+     */
+    private $downvotedmessages;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -99,11 +111,12 @@ class User implements UserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime('now');
-        $this->karma = 0;
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->upvotedposts = new ArrayCollection();
         $this->downvotedposts = new ArrayCollection();
+        $this->upvotedmessages = new ArrayCollection();
+        $this->downvotedmessages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -339,10 +352,15 @@ class User implements UserInterface
     public function getKarma(): ?int
     {
         $posts = $this->getPosts();
+        $messages = $this->getMessages();
         $karma = 0;
         foreach ($posts as $post) {
             $karma += count($post->getUpvotes()->toArray());
             $karma -= count($post->getDownvotes()->toArray());
+        }
+        foreach ($messages as $msg) {
+            $karma += count($msg->getUpvotes()->toArray());
+            $karma -= count($msg->getDownvotes()->toArray());
         }
         return $karma;
     }
@@ -412,6 +430,58 @@ class User implements UserInterface
     {
         if ($this->downvotedposts->contains($downvotedpost)) {
             $this->downvotedposts->removeElement($downvotedpost);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getUpvotedmessages(): Collection
+    {
+        return $this->upvotedmessages;
+    }
+
+    public function addUpvotedmessage(Message $upvotedmessage): self
+    {
+        if (!$this->upvotedmessages->contains($upvotedmessage)) {
+            $this->upvotedmessages[] = $upvotedmessage;
+        }
+
+        return $this;
+    }
+
+    public function removeUpvotedmessage(Message $upvotedmessage): self
+    {
+        if ($this->upvotedmessages->contains($upvotedmessage)) {
+            $this->upvotedmessages->removeElement($upvotedmessage);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getDownvotedmessages(): Collection
+    {
+        return $this->downvotedmessages;
+    }
+
+    public function addDownvotedmessage(Message $downvotedmessage): self
+    {
+        if (!$this->downvotedmessages->contains($downvotedmessage)) {
+            $this->downvotedmessages[] = $downvotedmessage;
+        }
+
+        return $this;
+    }
+
+    public function removeDownvotedmessage(Message $downvotedmessage): self
+    {
+        if ($this->downvotedmessages->contains($downvotedmessage)) {
+            $this->downvotedmessages->removeElement($downvotedmessage);
         }
 
         return $this;

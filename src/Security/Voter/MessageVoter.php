@@ -2,13 +2,13 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Post;
+use App\Entity\Message;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class PostVoter extends Voter
+class MessageVoter extends Voter
 {
     private $security;
     private $user;
@@ -20,8 +20,8 @@ class PostVoter extends Voter
 
     protected function supports($attribute, $subject)
     {
-        return in_array($attribute, ['POST_EDIT', 'POST_DELETE'])
-            && $subject instanceof Post;
+        return in_array($attribute, ['MESSAGE_EDIT', 'MESSAGE_DELETE'])
+            && $subject instanceof Message;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -32,19 +32,19 @@ class PostVoter extends Voter
         }
 
         switch ($attribute) {
-            case 'POST_EDIT':
+            case 'MESSAGE_EDIT':
                 return $this->allowEdit($subject);
                 break;
-            case 'POST_DELETE':
+            case 'MESSAGE_DELETE':
                 return $this->allowEdit($subject);
                 break;
         }
         return false;
     }
 
-    private function allowEdit(Post $post)
+    private function allowEdit(Message $message)
     {
-        if ($post->getAuthor() !== $this->user ||
+        if ($message->getAuthor() !== $this->user ||
             !$this->security->isGranted('ROLE_ADMIN') ||
             !$this->security->isGranted('ROLE_MODERATOR')
         ) {

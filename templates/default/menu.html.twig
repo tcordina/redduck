@@ -34,7 +34,8 @@
                 <li class="nav-item active">
                     <a href="{{ path('user_show', {'username': app.user.username}) }}"
                        class="btn btn-outline-secondary" title="account">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user"></i>&nbsp;
+                        {{ app.user.username }}
                     </a>
                 </li>
             {% endif %}

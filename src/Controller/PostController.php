@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\SubCategory;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class PostController extends AbstractController
 
     /**
      * @Route("/new/{subcategory}", name="post_new", methods="GET|POST")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function new(Request $request, SubCategory $subcategory): Response
     {
@@ -67,6 +69,7 @@ class PostController extends AbstractController
 
     /**
      * @Route("/{id}/{slug}/edit", name="post_edit", methods="GET|POST")
+     * @Security("is_granted('POST_EDIT', post)")
      */
     public function edit(Request $request, Post $post): Response
     {
@@ -82,7 +85,7 @@ class PostController extends AbstractController
             $em->persist($post);
             $em->flush();
 
-            return $this->redirectToRoute('post_edit', [
+            return $this->redirectToRoute('post_show', [
                 'id' => $post->getId(),
                 'slug' => $post->getSlug(),
             ]);
@@ -96,20 +99,24 @@ class PostController extends AbstractController
 
     /**
      * @Route("/{id}", name="post_delete", methods="DELETE")
+     * @Security("is_granted('POST_DELETE', post)")
      */
     public function delete(Request $request, Post $post): Response
     {
+        $subcategory = $post->getSubcategory();
         if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($post);
             $em->flush();
         }
 
-        return $this->redirectToRoute('post_index');
+        return $this->redirectToRoute('subcategory_show', [
+            'slug' => $subcategory->getSlug(),
+        ]);
     }
 
     /**
-     * @Route("/{id}/upvote", name="post_upvote", methods="GET|POST")
+     * @Route("/{id}/upvote", name="post_upvote", methods="POST")
      */
     public function upvote(Post $post)
     {
@@ -133,7 +140,7 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/downvote", name="post_downvote", methods="GET|POST")
+     * @Route("/{id}/downvote", name="post_downvote", methods="POST")
      */
     public function downvote(Post $post)
     {

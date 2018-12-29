@@ -4,82 +4,201 @@
 
 {% block body %}
     <div class="container mt-2">
-        <span>
-            <a class="badge badge-primary"
-               href="{{ path('subcategory_show',{'slug':post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
-            posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
-        </span>
-        <h1 class="mt-2">{{ post.title }}</h1>
-        <p>{{ post.createdAt ? post.createdAt|date('m/d/Y - H:i') : '' }}</p>
-        <hr>
-        <p class="post-content">{{ post.content|linkify|raw }}</p>
-        {% if post.image is not null %}
-            <div class="post-image row justify-content-center">
+        <div class="row">
+            <div class="col-1 buttons-vote" align="center">
+                <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
+                        onclick="upVotePost(this, event, {{ post.id }})" title="upvote">
+                    <i class="fas fa-sort-up"></i>
+                </button>
+                <span class="karma-count">{{ post.upvotes|length - post.downvotes|length }}</span>
+                <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
+                        onclick="downVotePost(this, event, {{ post.id }})" title="downvote">
+                    <i class="fas fa-sort-down"></i>
+                </button>
+            </div>
+            <div class="col-11">
+                <h2 class="mb-0">{{ post.title }}</h2>
+                <small>Posted by <a
+                            href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                </small>
+                -
+                <small>{{ post.createdAt|timeago }}</small>
+                {%  if is_granted('POST_EDIT', post) %}
                 <div>
-                    <a href="{{ path('post_show', {'id':post.id, 'slug':post.slug}) }}">
-                        <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
-                    </a>
+                    <a class="btn btn-secondary" href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}"><i class="fas fa-cog"></i></a>
+                    {{ include('post/_delete_form.html.twig') }}
                 </div>
-            </div>
-        {% elseif post.ytlink is not null %}
-            <div class="row justify-content-center">
-                <div class="embed-responsive embed-responsive-16by9 col-10">
-                    <iframe class="embed-responsive-item"
-                            src="https://www.youtube.com/embed/{{ post.ytlink }}"
-                            frameborder="0"
-                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-                            height="200" allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-        {% endif %}
-        <br/><br/>
-        {% if app.user %}
-            Comment as {{ app.user.username }}
-            {{ render(url('message_new', {'post': post.id})) }}
-        {% else %}
-            <div class="mt-4">
-                <span class="mr-4">What are your thoughts ? Log in or Sign up.</span>
-                <span>
+                {% endif %}
+                <nav aria-label="breadcrumb" class="mt-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ path('home') }}">Home</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ path('category_show', {'slug': post.subcategory.category.slug}) }}">{{ post.subcategory.category.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ path('subcategory_show', {'slug': post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+                    </ol>
+                </nav>
+                {% if post.image is not null %}
+                    <div class="post-image row justify-content-center">
+                        <div>
+                            <a href="{{ path('post_show', {'id':post.id, 'slug':post.slug}) }}">
+                                <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
+                            </a>
+                        </div>
+                    </div>
+                {% elseif post.ytlink is not null %}
+                    <div class="row justify-content-center">
+                        <div class="embed-responsive embed-responsive-16by9 col-10">
+                            <iframe class="embed-responsive-item"
+                                    src="https://www.youtube.com/embed/{{ post.ytlink }}"
+                                    frameborder="0"
+                                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                                    height="200" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                {% endif %}
+                <br/><br/>
+                {% if app.user %}
+                    Comment as {{ app.user.username }}
+                    {{ render(url('message_new', {'post': post.id})) }}
+                {% else %}
+                    <div class="mt-4">
+                        <span class="mr-4">What are your thoughts ? Log in or Sign up.</span>
+                        <span>
                     <a href="{{ path('security_login') }}" class="btn btn-navbar btn-outline-primary">LOG IN</a>
                     <a href="{{ path('security_register') }}" class="btn btn-navbar btn-primary">SIGN UP</a>
                 </span>
+                    </div>
+                {% endif %}
+                <br/>
+                <br/><br/>
+                <div id="comments">
+                    {{ render(controller('App\\Controller\\MessageController::listByPost', {'post': post})) }}
+                </div>
+                <br/>
             </div>
-        {% endif %}
-        <br/>
-        <br/><br/>
-        <div id="comments">
-            {{ render(controller('App\\Controller\\MessageController::index', {'post': post})) }}
         </div>
-        <br/>
-        <a href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}">edit</a>
-
-        {{ include('post/_delete_form.html.twig') }}
     </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    {#<script>
-        $('#form-comment-post').on('submit', function (ev) {
-            ev.preventDefault();
+    <script>
+        function upVotePost(btn, event, postId) {
+            event.stopImmediatePropagation();
+            postId = postId.toString();
+            let url = '{{ path('post_upvote', {'id': 'postId'}) }}'
+            url = url.replace('postId', postId);
             $.ajax({
-                type: 'POST',
-                url: '{{ path('message_new', {'post': post.id}) }}',
-                enctype: 'multipart/form-data',
-                data: {
-                    message: {
-                        'content': $('#message_content').val(),
-                        'imageFile': {
-                            'file': $('#message_imageFile_file').val(),
-                        },
-                        '_token': $('#message__token').val(),
-                    }
-                },
+                method: 'POST',
+                url: url,
+                type: 'text',
                 success: function (res) {
-                    console.log(res);
-                    $('#comments').empty().load('{{ path('message_index') }}')
+                    let curKarma = $(btn).parent().find('.karma-count').text()
+                    if (res == 'added') {
+                        $(btn).addClass('text-info')
+                        if ($(btn).next().next().hasClass('text-warning')) {
+                            curKarma++
+                        }
+                        $(btn).next().next().removeClass('text-warning');
+                        $(btn).parent().find('.karma-count').text(+curKarma + 1)
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-info')
+                        $(btn).parent().find('.karma-count').text(+curKarma - 1)
+                    } else if (res == 'login') {
+                        location.href = '{{ path('security_login') }}'
+                    }
                 }
             })
-        })
-    </script>#}
+        }
+
+        function downVotePost(btn, event, postId) {
+            event.stopImmediatePropagation();
+            postId = postId.toString();
+            let url = '{{ path('post_downvote', {'id': 'postId'}) }}'
+            url = url.replace('postId', postId);
+            $.ajax({
+                method: 'POST',
+                url: url,
+                type: 'text',
+                success: function (res) {
+                    let curKarma = $(btn).parent().find('.karma-count').text()
+                    if (res == 'added') {
+                        $(btn).addClass('text-warning')
+                        if ($(btn).prev().prev().hasClass('text-info')) {
+                            curKarma -= 1
+                        }
+                        $(btn).prev().prev().removeClass('text-info');
+                        $(btn).parent().find('.karma-count').text(+curKarma - 1)
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-warning')
+                        $(btn).parent().find('.karma-count').text(+curKarma + 1)
+                    } else if (res == 'login') {
+                        location.href = '{{ path('security_login') }}'
+                    }
+                }
+            })
+        }
+
+        function upVoteMsg(btn, event, msgId) {
+            event.stopImmediatePropagation();
+            msgId = msgId.toString();
+            let url = '{{ path('message_upvote', {'id': 'msgId'}) }}'
+            url = url.replace('msgId', msgId);
+            $.ajax({
+                method: 'POST',
+                url: url,
+                type: 'text',
+                success: function (res) {
+                    let curKarma = $(btn).parent().parent().find('.karma-count').text()
+                    if (res == 'added') {
+                        $(btn).addClass('text-info')
+                        if ($(btn).next().hasClass('text-warning')) {
+                            curKarma++
+                        }
+                        $(btn).next().removeClass('text-warning');
+                        $(btn).parent().parent().find('.karma-count').text(+curKarma + 1)
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-info')
+                        $(btn).parent().parent().find('.karma-count').text(+curKarma - 1)
+                    } else if (res == 'login') {
+                        location.href = '{{ path('security_login') }}'
+                    }
+                }
+            })
+        }
+
+        function downVoteMsg(btn, event, msgId) {
+            event.stopImmediatePropagation();
+            msgId = msgId.toString();
+            let url = '{{ path('message_downvote', {'id': 'msgId'}) }}'
+            url = url.replace('msgId', msgId);
+            $.ajax({
+                method: 'POST',
+                url: url,
+                type: 'text',
+                success: function (res) {
+                    let curKarma = $(btn).parent().parent().find('.karma-count').text()
+                    if (res == 'added') {
+                        $(btn).addClass('text-warning')
+                        if ($(btn).prev().hasClass('text-info')) {
+                            curKarma -= 1
+                        }
+                        $(btn).prev().removeClass('text-info');
+                        $(btn).parent().parent().find('.karma-count').text(+curKarma - 1)
+                    } else if (res == 'removed') {
+                        $(btn).removeClass('text-warning')
+                        $(btn).parent().parent().find('.karma-count').text(+curKarma + 1)
+                    } else if (res == 'login') {
+                        location.href = '{{ path('security_login') }}'
+                    }
+                }
+            })
+        }
+    </script>
 {% endblock %}

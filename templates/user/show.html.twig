@@ -29,7 +29,12 @@
                                     {{ user.bio }}
                                 </p>
                                 <small>
-                                    Joined on {{ user.createdAt|date('m/d/Y') }}
+                                    <i class="fas fa-birthday-cake text-primary"></i>&nbsp;
+                                    {{ user.createdAt|date('F d, Y') }}
+                                </small><br/>
+                                <small>
+                                    <i class="fas fa-certificate text-primary"></i>&nbsp;
+                                    {{ user.karma }} Karma
                                 </small>
                             </div>
                             <div class="col-md-8">
@@ -132,7 +137,7 @@
             <div class="col-lg-2 order-lg-1 text-center">
                 {% if(user.image is not null) %}
                     <img src="{{ asset('uploads/images/users/' ~ user.image) }}"
-                         class="mx-auto img-fluid img-circle d-block" alt="avatar" width="400">
+                         class="mx-auto img-fluid d-block img-thumbnail" alt="avatar" width="400">
                 {% else %}
                     <img src="//placehold.it/150" class="mx-auto img-fluid img-circle d-block" alt="avatar">
                 {% endif %}
