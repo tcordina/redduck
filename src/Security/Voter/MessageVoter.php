@@ -44,13 +44,13 @@ class MessageVoter extends Voter
 
     private function allowEdit(Message $message)
     {
-        if ($message->getAuthor() !== $this->user ||
-            !$this->security->isGranted('ROLE_ADMIN') ||
-            !$this->security->isGranted('ROLE_MODERATOR')
+        if ($message->getAuthor() === $this->user ||
+            $this->security->isGranted('ROLE_ADMIN') ||
+            $this->security->isGranted('ROLE_MODERATOR')
         ) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }
