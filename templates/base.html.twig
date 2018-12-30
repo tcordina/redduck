@@ -28,6 +28,16 @@
             console.log($('input[name=search]').val().trim());
             return $('input[name=search]').val().trim() !== '';
         })
+    $(document).ready( function() {
+        $('.thumbnail img').each(function () {
+            let height = this.naturalHeight
+            let width = this.naturalWidth
+            console.log(width, height)
+            if (height > width) {
+                $(this).addClass('portrait')
+            }
+        })
+    })
     </script>
 {% endblock %}
 </body>

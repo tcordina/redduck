@@ -151,12 +151,6 @@ body {
     overflow: auto;
 }
 
-.comment-wrapper .media-list .media img {
-    width: 64px;
-    height: 64px;
-    border: 2px solid #e5e7e8;
-}
-
 .comment-wrapper .media-list .media {
     margin-bottom: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -187,4 +181,34 @@ body {
 .category-description {
     max-width: 70%;
     line-height: .9rem;
+}
+
+.thumbnail {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1)
+}
+.thumbnail-profile {
+    width: 150px;
+    height: 150px;
+}
+.thumbnail-message {
+    width: 64px;
+    height: 64px;
+}
+.thumbnail img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}
+.thumbnail img.portrait {
+    width: 100%;
+    height: auto;
 }

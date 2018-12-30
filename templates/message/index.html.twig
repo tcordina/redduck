@@ -3,38 +3,46 @@
         <div class="panel-body">
             <ul class="media-list">
                 {% for message in messages %}
-                <li class="media">
-                    <div class="buttons-vote buttons-vote-message" align="center">
-                    <button class="upvote-btn {% if message.upvotes.contains(app.user) %}text-info{% endif %}"
-                            onclick="upVoteMsg(this, event, {{ message.id }})" title="upvote">
-                        <i class="fas fa-sort-up"></i>
-                    </button>
-                    <button class="downvote-btn {% if message.downvotes.contains(app.user) %}text-warning{% endif %}"
-                            onclick="downVoteMsg(this, event, {{ message.id }})" title="downvote">
-                        <i class="fas fa-sort-down"></i>
-                    </button>
-                    </div>
-                    <a href="{{ path('user_show', {'username':message.author.username}) }}" class="float-left">
-                        <img src="{{ asset('uploads/images/users/' ~ message.author.image) }}" alt="" class="rounded-circle">
-                    </a>
-                    <div class="media-body ml-2">
+                    <li class="media">
+                        <div class="buttons-vote buttons-vote-message" align="center">
+                            <button class="upvote-btn {% if message.upvotes.contains(app.user) %}text-info{% endif %}"
+                                    onclick="upVoteMsg(this, event, {{ message.id }})" title="upvote">
+                                <i class="fas fa-sort-up"></i>
+                            </button>
+                            <button class="downvote-btn {% if message.downvotes.contains(app.user) %}text-warning{% endif %}"
+                                    onclick="downVoteMsg(this, event, {{ message.id }})" title="downvote">
+                                <i class="fas fa-sort-down"></i>
+                            </button>
+                        </div>
+                        <a href="{{ path('user_show', {'username':message.author.username}) }}" class="float-left">
+                            {% if message.author.image is not null %}
+                                <div class="thumbnail thumbnail-message rounded-circle">
+                                    <img src="{{ asset('uploads/images/users/' ~ message.author.image) }}" alt="">
+                                </div>
+                            {% endif %}
+                        </a>
+                        <div class="media-body ml-2">
                                 <span class="text-muted float-right">
                                     <small class="text-muted">{{ message.createdAt|timeago }}</small>
                                 </span>
-                        <strong class="text-success">u/{{ message.author.username }}</strong>&nbsp;
-                        <small><span class="karma-count">{{ message.upvotes|length - message.downvotes|length }}</span> points</small>
-                        <p>{{ message.content }}</p>
-                        {% if message.image is not null %}
-                            <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">
-                        {% endif %}
-                        {% if is_granted('MESSAGE_EDIT', message) %}
-                        <div class="media-footer">
-                            <a class="btn btn-link" href="{{ path('message_edit', {'id': message.id}) }}">Edit</a>
-                            {{ include('message/_delete_form.html.twig') }}
+                            <strong class="text-success">u/{{ message.author.username }}</strong>&nbsp;
+                            <small><span
+                                        class="karma-count">{{ message.upvotes|length - message.downvotes|length }}</span>
+                                points
+                            </small>
+                            <p>{{ message.content }}</p>
+                            {% if message.image is not null %}
+                                <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">
+                            {% endif %}
+                            {% if is_granted('MESSAGE_EDIT', message) %}
+                                <div class="media-footer">
+                                    <a class="btn btn-link"
+                                       href="{{ path('message_edit', {'id': message.id}) }}">Edit</a>
+                                    {{ include('message/_delete_form.html.twig') }}
+                                </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                    </div>
-                </li>
+                    </li>
                 {% else %}
                     <span>It looks like there is nothing here :/</span>
                 {% endfor %}

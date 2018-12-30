@@ -22,16 +22,20 @@
                 <div class="tab-content py-4">
                     <div class="tab-pane active" id="profile">
                         <div class="row">
-                            {% for type, messages in app.session.flashbag.all %}
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-                                        {{ message }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
+                            <div class="col-12">
+                                {% for type, messages in app.session.flashbag.all %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
                                 {% endfor %}
-                            {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-4">
                                     <h4 class="mb-4">u/{{ user.username }}</h4>
@@ -50,18 +54,20 @@
                                     </small>
                                 </div>
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <form class="d-inline-block" method="post" action="{{ path('grant_admin', {'user': user.id}) }}">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_admin') }}">
-                                    <button class="btn btn-warning">
-                                        {{ user.hasRole('ROLE_ADMIN') ? 'Remove' : 'Grant' }} admin
-                                    </button>
-                                </form>
-                                <form class="d-inline-block" method="post" action="{{ path('grant_mod', {'user': user.id}) }}">
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_mod') }}">
-                                    <button class="btn btn-info">
-                                        {{ user.hasRole('ROLE_MODERATOR') ? 'Remove' : 'Grant' }} mod
-                                    </button>
-                                </form>
+                                    <form class="d-inline-block" method="post"
+                                          action="{{ path('grant_admin', {'user': user.id}) }}">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_admin') }}">
+                                        <button class="btn btn-warning">
+                                            {{ user.hasRole('ROLE_ADMIN') ? 'Remove' : 'Grant' }} admin
+                                        </button>
+                                    </form>
+                                    <form class="d-inline-block" method="post"
+                                          action="{{ path('grant_mod', {'user': user.id}) }}">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_mod') }}">
+                                        <button class="btn btn-info">
+                                            {{ user.hasRole('ROLE_MODERATOR') ? 'Remove' : 'Grant' }} mod
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
                             <div class="col-md-8">
@@ -154,8 +160,9 @@
             </div>
             <div class="col-lg-2 order-lg-1 text-center">
                 {% if(user.image is not null) %}
-                    <img src="{{ asset('uploads/images/users/' ~ user.image) }}"
-                         class="mx-auto img-fluid d-block img-thumbnail" alt="avatar" width="400">
+                    <div class="thumbnail thumbnail-profile">
+                        <img src="{{ asset('uploads/images/users/' ~ user.image) }}" class="mx-auto img-fluid d-block" alt="avatar">
+                    </div>
                 {% else %}
                     <img src="//placehold.it/150" class="mx-auto img-fluid img-circle d-block" alt="avatar">
                 {% endif %}
