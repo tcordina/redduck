@@ -113,10 +113,6 @@ body {
     height: 400px;
 }
 
-.post-content {
-    white-space: pre-line;
-}
-
 .buttons-vote {
     position: relative;
     top: 15px;
@@ -186,4 +182,9 @@ body {
 .nav-item {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.category-description {
+    max-width: 70%;
+    line-height: .9rem;
 }

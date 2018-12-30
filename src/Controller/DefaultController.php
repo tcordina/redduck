@@ -27,29 +27,43 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/setadmin")
+     * @Route("/setadmin/{user}", name="grant_admin", methods="POST")
      */
-    public function setAdmin()
+    public function setAdmin(Request $request, User $user)
     {
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $user->setRoles(['ROLE_ADMIN']);
-        $em->persist($user);
-        $em->flush();
-        return new Response('Done');
+        if ($this->isCsrfTokenValid('grant_admin', $request->get('_csrf_token'))) {
+            $em = $this->getDoctrine()->getManager();
+            if ($user->getRoles() === ['ROLE_ADMIN']) {
+                $user->setRoles([]);
+            } else {
+                $user->setRoles(['ROLE_ADMIN']);
+            }
+            $em->persist($user);
+            $em->flush();
+        }
+        return $this->redirectToRoute('user_show', [
+            'username' => $user->getUsername(),
+        ]);
     }
 
     /**
-     * @Route("/setmoderator")
+     * @Route("/setmoderator/{user}", name="grant_mod", methods="POST")
      */
-    public function setModerator()
+    public function setModerator(Request $request, User $user)
     {
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $user->setRoles(['ROLE_MODERATOR']);
-        $em->persist($user);
-        $em->flush();
-        return new Response('Done');
+        if ($this->isCsrfTokenValid('grant_mod', $request->get('_csrf_token'))) {
+            $em = $this->getDoctrine()->getManager();
+            if ($user->getRoles() === ['ROLE_MODERATOR']) {
+                $user->setRoles([]);
+            } else {
+                $user->setRoles(['ROLE_MODERATOR']);
+            }
+            $em->persist($user);
+            $em->flush();
+        }
+        return $this->redirectToRoute('user_show', [
+            'username' => $user->getUsername(),
+        ]);
     }
 
     /**

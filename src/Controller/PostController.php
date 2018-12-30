@@ -60,7 +60,7 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/{slug}", name="post_show", methods="GET")
+     * @Route("/{slug}/{id}", name="post_show", methods="GET")
      */
     public function show(Post $post): Response
     {

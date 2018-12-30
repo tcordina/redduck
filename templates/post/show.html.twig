@@ -23,11 +23,12 @@
                 </small>
                 -
                 <small>{{ post.createdAt|timeago }}</small>
-                {%  if is_granted('POST_EDIT', post) %}
-                <div>
-                    <a class="btn btn-secondary" href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}"><i class="fas fa-cog"></i></a>
-                    {{ include('post/_delete_form.html.twig') }}
-                </div>
+                {% if is_granted('POST_EDIT', post) %}
+                    <div>
+                        <a class="btn btn-secondary" href="{{ path('post_edit', {'slug': post.slug, 'id': post.id}) }}"><i
+                                    class="fas fa-cog"></i></a>
+                        {{ include('post/_delete_form.html.twig') }}
+                    </div>
                 {% endif %}
                 <nav aria-label="breadcrumb" class="mt-4">
                     <ol class="breadcrumb">
@@ -43,6 +44,11 @@
                         <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
                     </ol>
                 </nav>
+                <div class="post-content row col-12 mb-2">
+                    <p>
+                        {{ post.content|linkify|raw }}
+                    </p>
+                </div>
                 {% if post.image is not null %}
                     <div class="post-image row justify-content-center">
                         <div>

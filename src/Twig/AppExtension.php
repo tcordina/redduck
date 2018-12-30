@@ -61,7 +61,7 @@ class AppExtension extends AbstractExtension
         );
         $str = substr($str, 1);
 
-        return $str;
+        return nl2br($str);
     }
 
     public function isInstanceof($var, $instance)

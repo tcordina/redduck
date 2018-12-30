@@ -5,7 +5,12 @@
 {% block body %}
     <div class="container">
         <div id="accordion">
-            <h2 class="mb-3">Categories</h2>
+            <h2 class="mb-0">Categories</h2>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="mb-4 mt-2">
+                    <a class="btn btn-primary" href="{{ path('category_new') }}"><i class="fas fa-plus"></i></a>
+                </div>
+            {% endif %}
             {% for categorie in categories %}
                 <div class="card">
                     <div class="card-header" id="heading{{ loop.index }}" data-toggle="collapse"

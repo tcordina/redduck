@@ -11,72 +11,103 @@
                         <a href="#" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" data-target="#messages" data-toggle="tab" class="nav-link">Messages</a>
+                        <a href="#" data-target="#stats" data-toggle="tab" class="nav-link">Stats</a>
                     </li>
                     {% if app.user == user %}
-                    <li class="nav-item">
-                        <a href="#" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="#" data-target="#edit" data-toggle="tab" class="nav-link">Edit</a>
+                        </li>
                     {% endif %}
                 </ul>
                 <div class="tab-content py-4">
                     <div class="tab-pane active" id="profile">
                         <div class="row">
+                            {% for type, messages in app.session.flashbag.all %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
                             <div class="col-md-4">
-                                <h4 class="mb-4">u/{{ user.username }}</h4>
-                                <h5>About</h5>
-                                <p>
-                                    {{ user.bio }}
-                                </p>
-                                <small>
-                                    <i class="fas fa-birthday-cake text-primary"></i>&nbsp;
-                                    {{ user.createdAt|date('F d, Y') }}
-                                </small><br/>
-                                <small>
-                                    <i class="fas fa-certificate text-primary"></i>&nbsp;
-                                    {{ user.karma }} Karma
-                                </small>
+                                <div class="mb-4">
+                                    <h4 class="mb-4">u/{{ user.username }}</h4>
+                                    <h5>About</h5>
+                                    <p>
+                                        {{ user.bio }}
+                                    </p>
+                                    <small>
+                                        <i class="fas fa-birthday-cake text-primary"></i>&nbsp;
+                                        {{ user.createdAt|date('F d, Y') }}
+                                    </small>
+                                    <br/>
+                                    <small>
+                                        <i class="fas fa-certificate text-primary"></i>&nbsp;
+                                        {{ user.karma }} Karma
+                                    </small>
+                                </div>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <form class="d-inline-block" method="post" action="{{ path('grant_admin', {'user': user.id}) }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_admin') }}">
+                                    <button class="btn btn-warning">
+                                        {{ user.hasRole('ROLE_ADMIN') ? 'Remove' : 'Grant' }} admin
+                                    </button>
+                                </form>
+                                <form class="d-inline-block" method="post" action="{{ path('grant_mod', {'user': user.id}) }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('grant_mod') }}">
+                                    <button class="btn btn-info">
+                                        {{ user.hasRole('ROLE_MODERATOR') ? 'Remove' : 'Grant' }} mod
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                             <div class="col-md-8">
                                 <h5><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                                <table class="table table-sm table-hover table-striped">
-                                    <tbody>
-                                    {% for record in user.activity %}
-                                        {% if record is instanceof('App\\Entity\\Post') %}
-                                        <tr>
-                                            <td>
-                                                {{ user.username }} posted in
-                                                <strong>
-                                                    <a href="{{ path('category_show', {'slug': record.subcategory.category.slug}) }}">{{ record.subcategory.category.name }}</a>
-                                                    /
-                                                    <a href="{{ path('subcategory_show', {'slug': record.subcategory.slug}) }}">{{ record.subcategory.name }}</a>
-                                                </strong>
-                                            </td>
-                                            <td align="right">
-                                                <a href="{{ path('post_show', {'id': record.id, 'slug': record.slug}) }}"><small>{{ record.createdAt|timeago }}</small></a>
-                                            </td>
-                                        </tr>
-                                    {% else %}
-                                        <tr>
-                                            <td>
-                                                {{ user.username }} commented on
-                                                <strong>
-                                                    <a href="{{ path('category_show', {'slug': record.post.subcategory.category.slug}) }}">{{ record.post.subcategory.category.name }}</a>
-                                                    /
-                                                    <a href="{{ path('subcategory_show', {'slug': record.post.subcategory.slug}) }}">{{ record.post.subcategory.name }}</a>
-                                                    /
-                                                    <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}">{{ record.post.title|length > 20 ? record.post.title|slice(0,20) ~ '...' : record.post.title }}</a>
-                                                </strong>
-                                            </td>
-                                            <td align="right">
-                                                <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}"><small>{{ record.createdAt|timeago }}</small></a>
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                                    <table class="table table-sm table-hover table-striped">
+                                        <tbody>
+                                        {% for record in user.activity %}
+                                            {% if record is instanceof('App\\Entity\\Post') %}
+                                                <tr>
+                                                    <td>
+                                                        {{ user.username }} posted in
+                                                        <strong>
+                                                            <a href="{{ path('category_show', {'slug': record.subcategory.category.slug}) }}">{{ record.subcategory.category.name }}</a>
+                                                            /
+                                                            <a href="{{ path('subcategory_show', {'slug': record.subcategory.slug}) }}">{{ record.subcategory.name }}</a>
+                                                        </strong>
+                                                    </td>
+                                                    <td align="right">
+                                                        <a href="{{ path('post_show', {'id': record.id, 'slug': record.slug}) }}">
+                                                            <small>{{ record.createdAt|timeago }}</small>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td>
+                                                        {{ user.username }} commented on
+                                                        <strong>
+                                                            <a href="{{ path('category_show', {'slug': record.post.subcategory.category.slug}) }}">{{ record.post.subcategory.category.name }}</a>
+                                                            /
+                                                            <a href="{{ path('subcategory_show', {'slug': record.post.subcategory.slug}) }}">{{ record.post.subcategory.name }}</a>
+                                                            /
+                                                            <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}">{{ record.post.title|length > 20 ? record.post.title|slice(0,20) ~ '...' : record.post.title }}</a>
+                                                        </strong>
+                                                    </td>
+                                                    <td align="right">
+                                                        <a href="{{ path('post_show', {'id': record.post.id, 'slug': record.post.slug}) }}">
+                                                            <small>{{ record.createdAt|timeago }}</small>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 {% else %}
                                     <p>
                                         <a href="{{ path('security_login') }}">Log in</a>
@@ -87,7 +118,7 @@
                         </div>
                         <!--/row-->
                     </div>
-                    <div class="tab-pane" id="messages">
+                    <div class="tab-pane" id="stats">
                         <table class="table table-hover table-striped">
                             <tbody>
                             <tr>
@@ -104,33 +135,20 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <span class="float-right font-weight-bold">{{ user.upvotedposts|length + user.downvotedposts|length }}</span>
+                                    <span class="float-right font-weight-bold">{{ user.upvotedposts|length + user.downvotedposts|length + user.upvotedmessages|length + user.downvotedmessages|length }}</span>
                                     Total number of votes
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span class="float-right font-weight-bold">9/4</span> Vestibulum tincidunt
-                                    ullamcorper
-                                    eros eget luctus.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span class="float-right font-weight-bold">9/4</span> Maxamillion ais the fix for
-                                    tibulum tincidunt ullamcorper eros.
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     {% if app.user == user %}
-                    <div class="tab-pane" id="edit">
-                        {{ render(controller(
-                            'App\\Controller\\UserController::edit',
-                            { 'username': user.username }
-                        )) }}
-                    </div>
+                        <div class="tab-pane" id="edit">
+                            {{ render(controller(
+                                'App\\Controller\\UserController::edit',
+                                { 'username': user.username }
+                            )) }}
+                        </div>
                     {% endif %}
                 </div>
             </div>

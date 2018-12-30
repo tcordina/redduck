@@ -167,6 +167,12 @@ class User implements UserInterface
         return $this;
     }
 
+    public function hasRole($role): bool
+    {
+        $role = strtoupper($role);
+        return in_array($role, $this->roles);
+    }
+
     /**
      * @see UserInterface
      */
