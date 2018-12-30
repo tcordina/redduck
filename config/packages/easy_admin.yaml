@@ -1,0 +1,8 @@
+easy_admin:
+    entities:
+        # List the entity class name you want to manage
+        - App\Entity\User
+        - App\Entity\Category
+        - App\Entity\SubCategory
+        - App\Entity\Post
+        - App\Entity\Message

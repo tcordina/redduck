@@ -68,7 +68,7 @@ class SubCategoryController extends AbstractController
         } elseif ($sort === 'top') {
             $posts = $postRepository->findByTop($subCategory);
         } else {
-            $posts = array_reverse($postRepository->findAll());
+            $posts = array_reverse($postRepository->findBy(['subcategory' => $subCategory]));
         }
         return $this->render('subcategory/show.html.twig', [
             'subcategory' => $subCategory,
