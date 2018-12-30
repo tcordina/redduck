@@ -90,8 +90,14 @@ class Post
      */
     private $downvotes;
 
+    /**
+     * @ORM\Column(type="integer", length=10)
+     */
+    private $karma;
+
     public function __construct()
     {
+        $this->karma = 0;
         $this->createdAt = new \DateTime('now');
         $this->messages = new ArrayCollection();
         $this->upvotes = new ArrayCollection();
@@ -300,6 +306,18 @@ class Post
             $this->downvotes->removeElement($downvote);
             $downvote->removeDownvotedpost($this);
         }
+
+        return $this;
+    }
+
+    public function getKarma(): int
+    {
+        return $this->karma;
+    }
+
+    public function setKarma(int $karma): self
+    {
+        $this->karma = $karma;
 
         return $this;
     }

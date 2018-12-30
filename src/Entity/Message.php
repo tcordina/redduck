@@ -75,9 +75,15 @@ class Message
      */
     private $downvotes;
 
+    /**
+     * @ORM\Column(type="integer", length=10)
+     */
+    private $karma;
+
 
     public function __construct()
     {
+        $this->karma = 0;
         $this->createdAt = new \DateTime('now');
         $this->upvotes = new ArrayCollection();
         $this->downvotes = new ArrayCollection();
@@ -241,6 +247,18 @@ class Message
             $this->downvotes->removeElement($downvote);
             $downvote->removeDownvotedmessage($this);
         }
+
+        return $this;
+    }
+
+    public function getKarma(): int
+    {
+        return $this->karma;
+    }
+
+    public function setKarma(int $karma): self
+    {
+        $this->karma = $karma;
 
         return $this;
     }

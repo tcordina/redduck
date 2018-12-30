@@ -57,7 +57,7 @@
                                     onclick="upVote(this, event, {{ post.id }})" title="upvote">
                                 <i class="fas fa-sort-up"></i>
                             </button>
-                            <span class="karma-count">{{ post.upvotes|length - post.downvotes|length }}</span>
+                            <span class="karma-count">{{ post.karma }}</span>
                             <button class="downvote-btn {% if post.downvotes.contains(app.user) %}text-warning{% endif %}"
                                     onclick="downVote(this, event, {{ post.id }})" title="downvote">
                                 <i class="fas fa-sort-down"></i>

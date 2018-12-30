@@ -24,15 +24,13 @@ class PostRepository extends ServiceEntityRepository
     {
         $date = (new \DateTime('now'))->modify('-24 hours');
         return $this->createQueryBuilder('p')
-            ->addSelect('COUNT(u.id) AS HIDDEN uvcount')
-            ->join('p.upvotes', 'u')
-            ->groupBy('p.id')
             ->where('p.subcategory = :sub')
+            ->andWhere('p.karma > 0')
             ->andWhere('p.createdAt > :date')
             ->setParameter('sub', $subcategory)
             ->setParameter('date', $date)
-            ->orderBy('uvcount', 'DESC')
-            ->setMaxResults(25)
+            ->orderBy('p.karma', 'DESC')
+            ->setMaxResults(50)
             ->getQuery()
             ->getResult();
     }
@@ -40,13 +38,11 @@ class PostRepository extends ServiceEntityRepository
     public function findByTop($subcategory)
     {
         return $this->createQueryBuilder('p')
-            ->addSelect('COUNT(u.id) AS HIDDEN uvcount')
-            ->join('p.upvotes', 'u')
-            ->groupBy('p.id')
             ->where('p.subcategory = :sub')
+            ->andWhere('p.karma > 0')
             ->setParameter('sub', $subcategory)
-            ->orderBy('uvcount', 'DESC')
-            ->setMaxResults(25)
+            ->orderBy('p.karma', 'DESC')
+            ->setMaxResults(50)
             ->getQuery()
             ->getResult();
     }

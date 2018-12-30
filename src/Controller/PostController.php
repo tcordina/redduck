@@ -104,7 +104,7 @@ class PostController extends AbstractController
     public function delete(Request $request, Post $post): Response
     {
         $subcategory = $post->getSubcategory();
-        if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($post);
             $em->flush();
@@ -126,14 +126,17 @@ class PostController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
+            $post->setKarma($post->getKarma() - 1);
             $em->persist($post);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
+            $post->setKarma($post->getKarma() + 1);
         }
         $post->addUpvote($this->getUser());
+        $post->setKarma($post->getKarma() + 1);
         $em->persist($post);
         $em->flush();
         return new Response('added');
@@ -150,14 +153,17 @@ class PostController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
+            $post->setKarma($post->getKarma() + 1);
             $em->persist($post);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
+            $post->setKarma($post->getKarma() - 1);
         }
         $post->addDownvote($this->getUser());
+        $post->setKarma($post->getKarma() - 1);
         $em->persist($post);
         $em->flush();
         return new Response('added');
