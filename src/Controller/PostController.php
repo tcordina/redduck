@@ -167,7 +167,7 @@ class PostController extends AbstractController
         return new Response('added');
     }
 
-    private function getYtLink(string $content): string
+    private function getYtLink(string $content): ?string
     {
         preg_match_all('@(https?://)?(?:www\.)?(youtu(?:\.be/([-\w]+)|be\.com/watch\?v=([-\w]+)))\S*@im', $content, $aMatches);
         if (isset($aMatches[0][0])) {
