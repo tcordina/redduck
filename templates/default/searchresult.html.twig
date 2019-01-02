@@ -39,8 +39,8 @@
                                 {{ subcategorie.posts|length }} posts
                             </small>
                         </div>
-                        <p class="mb-1">{{ subcategorie.description|length > 50 ? subcategorie.description|slice(0,50) ~ '...' : subcategorie.description }}</p>
-                        <small>Donec id elit non mi porta.</small>
+                        <p class="mb-1">{{ subcategorie.description|length > 100 ? subcategorie.description|slice(0,100) ~ '...' : subcategorie.description }}</p>
+                        <small>{{ subcategorie.posts is not empty ? 'Last post ' ~ subcategorie.posts[0].createdAt|timeago : 'No post here' }}</small>
                     </a>
                 {% endfor %}
             </div>

@@ -37,8 +37,7 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $post->getTitle());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $this->slugify($post->getTitle());
             $ytlink = $this->getYtLink($post->getContent());
             $em = $this->getDoctrine()->getManager();
             $post->setSubcategory($subcategory)
@@ -77,8 +76,7 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $post->getTitle());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $this->slugify($post->getTitle());
             $ytlink = $this->getYtLink($post->getContent());
             $em = $this->getDoctrine()->getManager();
             $post->setSlug($slug)->setYtlink($ytlink);
@@ -169,7 +167,7 @@ class PostController extends AbstractController
         return new Response('added');
     }
 
-    private function getYtLink($content)
+    private function getYtLink(string $content): string
     {
         preg_match_all('@(https?://)?(?:www\.)?(youtu(?:\.be/([-\w]+)|be\.com/watch\?v=([-\w]+)))\S*@im', $content, $aMatches);
         if (isset($aMatches[0][0])) {
@@ -178,5 +176,17 @@ class PostController extends AbstractController
             $ytlink = null;
         }
         return $ytlink;
+    }
+
+    private function slugify(string $string): string
+    {
+        $string = preg_replace('~[^\pL\d]+~u', '-', $string);
+        $string = iconv('utf-8', 'us-ascii//TRANSLIT', $string);
+        $string = preg_replace('~[^-\w]+~', '', $string);
+        $string = trim($string, '-');
+        $string = preg_replace('~-+~', '-', $string);
+        $string = strtolower($string);
+
+        return $string;
     }
 }

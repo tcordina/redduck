@@ -8,6 +8,7 @@ use App\Entity\SubCategory;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\QueryBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,7 @@ class DefaultController extends AbstractController
 
     /**
      * @Route("/setadmin/{user}", name="grant_admin", methods="POST")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function setAdmin(Request $request, User $user)
     {
@@ -48,6 +50,7 @@ class DefaultController extends AbstractController
 
     /**
      * @Route("/setmoderator/{user}", name="grant_mod", methods="POST")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function setModerator(Request $request, User $user)
     {
@@ -71,50 +74,33 @@ class DefaultController extends AbstractController
      */
     public function search(Request $request)
     {
-        $query = $request->query->get('search');
+        $baseQuery = $request->query->get('search');
+        $prefix = substr($baseQuery, 0, 2);
+        $query = substr($baseQuery, 2);
         $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        /**
-         * @var $qb QueryBuilder
-         */
-        $categories = $qb
-            ->select('c')
-            ->from(Category::class, 'c')
-            ->where('c.name LIKE :query')
-            ->orWhere('c.slug LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
-
-        $subcategories = $qb
-            ->select('s')
-            ->from(SubCategory::class, 's')
-            ->where('s.name LIKE :query')
-            ->orWhere('s.slug LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
-
-        $posts = $qb
-            ->select('p')
-            ->from(Post::class, 'p')
-            ->leftJoin('p.author', 'a')
-            ->where('p.title LIKE :query')
-            ->orWhere('a.username LIKE :query')
-            ->orWhere('p.slug LIKE :query')
-            ->orderBy('p.createdAt', 'DESC')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
-
-        $users = $qb
-            ->select('u')
-            ->from(User::class, 'u')
-            ->where('u.username LIKE :query')
-            ->orderBy('u.username', 'ASC')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
+        $categories = [];
+        $subcategories = [];
+        $posts = [];
+        $users = [];
+        switch ($prefix) {
+            case 'c/':
+                $categories = $em->getRepository(Category::class)->search($query);
+                break;
+            case 'r/':
+                $subcategories = $em->getRepository(SubCategory::class)->search($query);
+                break;
+            case 'p/':
+                $posts = $em->getRepository(Post::class)->search($query);
+                break;
+            case 'u/':
+                $users = $em->getRepository(User::class)->search($query);
+                break;
+            default:
+                $categories = $em->getRepository(Category::class)->search($query);
+                $subcategories = $em->getRepository(SubCategory::class)->search($query);
+                $posts = $em->getRepository(Post::class)->search($query);
+                $users = $em->getRepository(User::class)->search($query);
+        }
 
         $resultsCount = count($categories) + count($subcategories) + count($posts) + count($users);
 
@@ -123,7 +109,7 @@ class DefaultController extends AbstractController
             'subcategories' => $subcategories,
             'posts' => $posts,
             'users' => $users,
-            'searchQuery' => $query,
+            'searchQuery' => $baseQuery,
             'resultsCount' => $resultsCount,
         ]);
     }

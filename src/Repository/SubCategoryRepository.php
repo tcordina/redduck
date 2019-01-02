@@ -19,32 +19,13 @@ class SubCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, SubCategory::class);
     }
 
-    // /**
-    //  * @return SubCategory[] Returns an array of SubCategory objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function search(string $query)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
+            ->where('s.name LIKE :query')
+            //->orWhere('s.slug LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?SubCategory
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
