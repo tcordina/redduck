@@ -76,7 +76,7 @@ class CategoryController extends AbstractController
             $category->setSlug(strtolower($slug));
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('category_index', ['id' => $category->getId()]);
+            return $this->redirectToRoute('category_show', ['slug' => $category->getSlug()]);
         }
 
         return $this->render('category/edit.html.twig', [

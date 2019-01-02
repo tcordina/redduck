@@ -11,11 +11,25 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        function updateFileInput() {
+            let input = $('#post_imageFile_file');
+            let filePath = $(input).val()
+            fileSplit = filePath.split('\\')
+            fileName = fileSplit[fileSplit.length - 1]
+            $(input).next('.custom-file-label').html(fileName)
+            if($(input).val().length === 0) {
+                $('#post_content').attr('required', 'required')
+            } else {
+                $('#post_content').removeAttr('required')
+            }
+        }
+
+        $(document).ready(function() {
+            updateFileInput()
+        })
+
         $('#post_imageFile_file').on('change', function () {
-            var filePath = $(this).val();
-            fileSplit = filePath.split('\\');
-            fileName = fileSplit[fileSplit.length - 1];
-            $(this).next('.custom-file-label').html(fileName);
+            updateFileInput()
         })
     </script>
 {% endblock %}

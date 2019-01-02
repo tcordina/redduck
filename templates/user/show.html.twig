@@ -173,11 +173,28 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        function updateFileInput() {
+            let input = $('#user_imageFile_file');
+            let filePath = $(input).val()
+            fileSplit = filePath.split('\\')
+            fileName = fileSplit[fileSplit.length - 1]
+            $(input).next('.custom-file-label').html(fileName)
+        }
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('.thumbnail-profile img').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $(document).ready(function() {
+            updateFileInput()
+        })
         $('#user_imageFile_file').on('change', function () {
-            var filePath = $(this).val();
-            fileSplit = filePath.split('\\');
-            fileName = fileSplit[fileSplit.length - 1];
-            $(this).next('.custom-file-label').html(fileName);
+            updateFileInput()
+            readURL(this)
         })
     </script>
 {% endblock %}
