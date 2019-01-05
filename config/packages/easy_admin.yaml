@@ -1,8 +1,51 @@
 easy_admin:
+    site_name: 'Administration'
+    formats:
+        date: 'd/m/Y'
+        time: 'H:i'
+        datetime: 'd/m/Y H:i:s'
     entities:
-        # List the entity class name you want to manage
-        - App\Entity\User
-        - App\Entity\Category
-        - App\Entity\SubCategory
-        - App\Entity\Post
-        - App\Entity\Message
+        User:
+            class: App\Entity\User
+            list:
+                fields: ['id', 'username', 'email', 'roles', 'karma', 'image', 'createdAt', 'updatedAt']
+                sort: ['username', 'ASC']
+            form:
+                fields: ['username', 'email', 'bio', 'roles', { property: 'imageFile', type: 'vich_image' }]
+            disabled_actions: ['new']
+        Category:
+            class: App\Entity\Category
+            list:
+                fields: ['id', 'name', 'description']
+                sort: ['name', 'ASC']
+            form:
+                fields: ['name', 'description']
+        SubCategory:
+            class: App\Entity\SubCategory
+            list:
+                fields: ['id', 'name', 'description', 'category']
+                sort: ['name', 'ASC']
+            form:
+                fields: ['category', 'name', 'description']
+        Post:
+            class: App\Entity\Post
+            list:
+                fields: ['id', 'author', 'title', 'content', 'karma', 'image', 'subcategory']
+                sort: ['id', 'DESC']
+            form:
+                fields: ['subcategory', 'title', 'content', { property: 'imageFile', type: 'vich_image' }]
+        Message:
+            class: App\Entity\Message
+            list:
+                fields: ['id', 'author', 'content', 'karma', 'image', 'post']
+                sort: ['id', 'DESC']
+            form:
+                fields: ['content', { property: 'imageFile', type: 'vich_image' }]
+    design:
+        menu:
+        - { label: 'Home', route: 'home', icon: 'home' }
+        - { entity: 'User', label: 'Users', icon: 'user' }
+        - { entity: 'Category', label: 'Categories', icon: 'th' }
+        - { entity: 'SubCategory', label: 'Subredducks', icon: 'list' }
+        - { entity: 'Post', label: 'Posts', icon: 'envelope' }
+        - { entity: 'Message', label: 'Comments', icon: 'comment' }

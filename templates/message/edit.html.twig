@@ -7,10 +7,58 @@
 
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button type="submit" form="form-comment-post" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     {{ form_end(form) }}
 
     <a class="btn btn-link" href="{{ path('post_show', {'id': message.post.id, 'slug': message.post.slug}) }}">Back to post</a>
 
     {{ include('message/_delete_form.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function updateFileInput() {
+            let input = $('#message_imageFile_file');
+            let filePath = $(input).val()
+            fileSplit = filePath.split('\\')
+            fileName = fileSplit[fileSplit.length - 1]
+            $(input).next('.custom-file-label').html(fileName)
+            if($(input).val().length === 0) {
+                $('#message_content').attr('required', 'required')
+            } else {
+                $('#message_content').removeAttr('required')
+            }
+        }
+
+        function handleCheckbox(input) {
+            console.log($(input).is(':checked'))
+            if ($(input).is(':checked')) {
+                $('#message_content').attr('required', 'required')
+            } else {
+                if($('#message_imageFile_file').val().length === 0 && '{{ message.image }}' == null) {
+                    $('#message_content').attr('required', 'required')
+                } else {
+                    $('#message_content').removeAttr('required')
+                }
+            }
+        }
+        {% if message.image is not null %}
+        $(document).ready(function() {
+            $('#message_imageFile_file').next('.custom-file-label').html('{{ message.image }}')
+            $('#message_content').removeAttr('required')
+        })
+        {% endif %}
+
+        $('#message_imageFile_file').on('change', function () {
+            updateFileInput()
+        })
+
+        $(document).ready(function() {
+            handleCheckbox($('#message_imageFile_delete'))
+        })
+
+        $('#message_imageFile_delete').on('change', function () {
+            handleCheckbox(this)
+        })
+    </script>
 {% endblock %}

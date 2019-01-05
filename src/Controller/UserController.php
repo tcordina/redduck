@@ -51,7 +51,6 @@ class UserController extends AbstractController
                 $password = $encoder->encodePassword($user, $user->getPlainpassword());
                 $user->setPassword($password);
             }
-            $user->setUpdatedAt(new \DateTime('now'));
             try {
                 $this->getDoctrine()->getManager()->flush();
                 $this->addFlash('success', 'Profile successfully updated.');

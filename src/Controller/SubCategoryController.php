@@ -7,6 +7,7 @@ use App\Entity\SubCategory;
 use App\Form\SubCategoryType;
 use App\Repository\PostRepository;
 use App\Repository\SubCategoryRepository;
+use App\Service\SluggerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,15 +31,14 @@ class SubCategoryController extends AbstractController
      * @Route("/new/{category}", name="subcategory_new", methods="GET|POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function new(Request $request, Category $category): Response
+    public function new(Request $request, Category $category, SluggerService $sluggerService): Response
     {
         $subCategory = new SubCategory();
         $form = $this->createForm(SubCategoryType::class, $subCategory)->remove('category');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $subCategory->getName());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $sluggerService->slugify($category->getName());
             $subCategory
                 ->setSlug(strtolower($slug))
                 ->setCategory($category);
@@ -53,6 +53,7 @@ class SubCategoryController extends AbstractController
 
         return $this->render('subcategory/new.html.twig', [
             'subcategory' => $subCategory,
+            'category' => $category,
             'form' => $form->createView(),
         ]);
     }
@@ -80,14 +81,13 @@ class SubCategoryController extends AbstractController
      * @Route("/{slug}/edit", name="subcategory_edit", methods="GET|POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function edit(Request $request, SubCategory $subCategory): Response
+    public function edit(Request $request, SubCategory $subCategory, SluggerService $sluggerService): Response
     {
         $form = $this->createForm(SubCategoryType::class, $subCategory);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $subCategory->getName());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $sluggerService->slugify($subCategory->getName());
             $subCategory->setSlug(strtolower($slug));
             $this->getDoctrine()->getManager()->flush();
 

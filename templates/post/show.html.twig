@@ -4,6 +4,20 @@
 
 {% block body %}
     <div class="container mt-2">
+        <nav aria-label="breadcrumb" class="mt-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('home') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('category_show', {'slug': post.subcategory.category.slug}) }}">{{ post.subcategory.category.name }}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('subcategory_show', {'slug': post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+            </ol>
+        </nav>
         <div class="row">
             <div class="col-1 buttons-vote" align="center">
                 <button class="upvote-btn {% if post.upvotes.contains(app.user) %}text-info{% endif %}"
@@ -30,20 +44,6 @@
                         {{ include('post/_delete_form.html.twig') }}
                     </div>
                 {% endif %}
-                <nav aria-label="breadcrumb" class="mt-4">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ path('home') }}">Home</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="{{ path('category_show', {'slug': post.subcategory.category.slug}) }}">{{ post.subcategory.category.name }}</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="{{ path('subcategory_show', {'slug': post.subcategory.slug}) }}">{{ post.subcategory.name }}</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
-                    </ol>
-                </nav>
                 <div class="post-content row col-12 mb-2">
                     <p>
                         {{ post.content|linkify|raw }}
@@ -206,5 +206,22 @@
                 }
             })
         }
+
+        function updateFileInput() {
+            let input = $('#message_imageFile_file');
+            let filePath = $(input).val()
+            fileSplit = filePath.split('\\')
+            fileName = fileSplit[fileSplit.length - 1]
+            $(input).next('.custom-file-label').html(fileName)
+            if($(input).val().length === 0) {
+                $('#message_content').attr('required', 'required')
+            } else {
+                $('#message_content').removeAttr('required')
+            }
+        }
+
+        $('#message_imageFile_file').on('change', function () {
+            updateFileInput()
+        })
     </script>
 {% endblock %}

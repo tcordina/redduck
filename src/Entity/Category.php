@@ -46,7 +46,7 @@ class Category
 
     public function __toString(): string
     {
-        return $this->slug;
+        return $this->name;
     }
 
 

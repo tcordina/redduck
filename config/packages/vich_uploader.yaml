@@ -5,11 +5,17 @@ vich_uploader:
             uri_prefix:         '%app.path.images_posts%'
             upload_destination: '%kernel.root_dir%/../public/uploads/images/posts'
             namer: vich_uploader.namer_uniqid
+            delete_on_remove: true
+            delete_on_update: true
         images_messages:
             uri_prefix:         '%app.path.images_messages%'
             upload_destination: '%kernel.root_dir%/../public/uploads/images/messages'
             namer: vich_uploader.namer_uniqid
+            delete_on_remove: true
+            delete_on_update: true
         images_users:
             uri_prefix:         '%app.path.images_users%'
             upload_destination: '%kernel.root_dir%/../public/uploads/images/users'
             namer: vich_uploader.namer_uniqid
+            delete_on_remove: true
+            delete_on_update: true

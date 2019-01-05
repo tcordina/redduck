@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use App\Service\SluggerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,15 +29,14 @@ class CategoryController extends AbstractController
      * @Route("/new", name="category_new", methods="GET|POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, SluggerService $sluggerService): Response
     {
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $category->getName());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $sluggerService->slugify($category->getName());
             $category->setSlug(strtolower($slug));
             $em = $this->getDoctrine()->getManager();
             $em->persist($category);
@@ -65,14 +65,13 @@ class CategoryController extends AbstractController
      * @Route("/{slug}/edit", name="category_edit", methods="GET|POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function edit(Request $request, Category $category): Response
+    public function edit(Request $request, Category $category, SluggerService $sluggerService): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = str_replace(' ', '-', $category->getName());
-            $slug = str_replace('\'', '', $slug);
+            $slug = $sluggerService->slugify($category->getName());
             $category->setSlug(strtolower($slug));
             $this->getDoctrine()->getManager()->flush();
 

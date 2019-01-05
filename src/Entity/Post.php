@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
+ * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable
  */
 class Post
@@ -24,12 +25,13 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts", fetch="EAGER")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\SubCategory", inversedBy="posts")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $subcategory;
 
@@ -90,20 +92,34 @@ class Post
      */
     private $downvotes;
 
-    /**
-     * @ORM\Column(type="integer", length=10)
-     */
-    private $karma;
 
     public function __construct()
     {
-        $this->karma = 0;
-        $this->createdAt = new \DateTime('now');
         $this->messages = new ArrayCollection();
         $this->upvotes = new ArrayCollection();
         $this->downvotes = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+        $this->updatedAt = new \DateTime("now");
+    }
 
     public function getId(): ?int
     {
@@ -312,14 +328,7 @@ class Post
 
     public function getKarma(): int
     {
-        return $this->karma;
-    }
-
-    public function setKarma(int $karma): self
-    {
-        $this->karma = $karma;
-
-        return $this;
+        return count($this->upvotes) - count($this->downvotes);
     }
 
     public function getYtlink(): ?string

@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable
  */
 class User implements UserInterface
@@ -63,25 +64,37 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="upvotes")
-     * @ORM\JoinTable(name="post_upvotes")
+     * @ORM\JoinTable(name="post_upvotes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
      */
     private $upvotedposts;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="downvotes")
-     * @ORM\JoinTable(name="post_downvotes")
+     * @ORM\JoinTable(name="post_downvotes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
      */
     private $downvotedposts;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="upvotes")
-     * @ORM\JoinTable(name="message_upvotes")
+     * @ORM\JoinTable(name="message_upvotes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
      */
     private $upvotedmessages;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="downvotes")
-     * @ORM\JoinTable(name="message_downvotes")
+     * @ORM\JoinTable(name="message_downvotes",
+     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     * )
      */
     private $downvotedmessages;
 
@@ -99,24 +112,46 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="author")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $posts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="author")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $messages;
 
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime('now');
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->upvotedposts = new ArrayCollection();
         $this->downvotedposts = new ArrayCollection();
         $this->upvotedmessages = new ArrayCollection();
         $this->downvotedmessages = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->username;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+        $this->updatedAt = new \DateTime("now");
     }
 
     public function getId(): ?int
@@ -136,12 +171,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername($username)
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
 
@@ -361,12 +396,12 @@ class User implements UserInterface
         $messages = $this->getMessages();
         $karma = 0;
         foreach ($posts as $post) {
-            $karma += count($post->getUpvotes()->toArray());
-            $karma -= count($post->getDownvotes()->toArray());
+            $karma += count($post->getUpvotes());
+            $karma -= count($post->getDownvotes());
         }
         foreach ($messages as $msg) {
-            $karma += count($msg->getUpvotes()->toArray());
-            $karma -= count($msg->getDownvotes()->toArray());
+            $karma += count($msg->getUpvotes());
+            $karma -= count($msg->getDownvotes());
         }
         return $karma;
     }

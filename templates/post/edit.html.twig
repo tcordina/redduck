@@ -26,12 +26,37 @@
                 $('#post_content').removeAttr('required')
             }
         }
+
+        function handleCheckbox(input) {
+            console.log($(input).is(':checked'))
+            if ($(input).is(':checked')) {
+                $('#post_content').attr('required', 'required')
+            } else {
+                if($('#post_imageFile_file').val().length === 0 && '{{ post.image }}' == null) {
+                    $('#post_content').attr('required', 'required')
+                } else {
+                    $('#post_content').removeAttr('required')
+                }
+            }
+        }
+
+        {% if post.image is not null %}
         $(document).ready(function() {
-            updateFileInput()
+            $('#post_imageFile_file').next('.custom-file-label').html('{{ post.image }}')
+            $('#post_content').removeAttr('required')
         })
+        {% endif %}
 
         $('#post_imageFile_file').on('change', function () {
             updateFileInput()
+        })
+
+        $(document).ready(function() {
+            handleCheckbox($('#post_imageFile_delete'))
+        })
+
+        $('#post_imageFile_delete').on('change', function () {
+            handleCheckbox(this)
         })
     </script>
 {% endblock %}

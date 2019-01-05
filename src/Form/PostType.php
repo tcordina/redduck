@@ -23,12 +23,15 @@ class PostType extends AbstractType
             ])
             ->add('title')
             ->add('content', TextareaType::class, [
-                'required' => true
+                'required' => true,
+                'attr' => [
+                    'placeholder' => 'Say something ...',
+                ],
             ])
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'allow_delete' => true,
-                'delete_label' => 'Supprimer',
+                'delete_label' => 'Delete image',
                 'download_uri' => false,
                 'image_uri' => true,
             ])

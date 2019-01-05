@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\SubCategory;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Service\SluggerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,14 +31,14 @@ class PostController extends AbstractController
      * @Route("/new/{subcategory}", name="post_new", methods="GET|POST")
      * @Security("is_granted('ROLE_USER')")
      */
-    public function new(Request $request, SubCategory $subcategory): Response
+    public function new(Request $request, SubCategory $subcategory, SluggerService $sluggerService): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post)->remove('subcategory');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = $this->slugify($post->getTitle());
+            $slug = $sluggerService->slugify($post->getTitle());
             $ytlink = $this->getYtLink($post->getContent());
             $em = $this->getDoctrine()->getManager();
             $post->setSubcategory($subcategory)
@@ -54,6 +55,7 @@ class PostController extends AbstractController
 
         return $this->render('post/new.html.twig', [
             'post' => $post,
+            'subcategory' => $subcategory,
             'form' => $form->createView(),
         ]);
     }
@@ -70,13 +72,13 @@ class PostController extends AbstractController
      * @Route("/{id}/{slug}/edit", name="post_edit", methods="GET|POST")
      * @Security("is_granted('POST_EDIT', post)")
      */
-    public function edit(Request $request, Post $post): Response
+    public function edit(Request $request, Post $post, SluggerService $sluggerService): Response
     {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = $this->slugify($post->getTitle());
+            $slug = $sluggerService->slugify($post->getTitle());
             $ytlink = $this->getYtLink($post->getContent());
             $em = $this->getDoctrine()->getManager();
             $post->setSlug($slug)->setYtlink($ytlink);
@@ -124,17 +126,14 @@ class PostController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
-            $post->setKarma($post->getKarma() - 1);
             $em->persist($post);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
-            $post->setKarma($post->getKarma() + 1);
         }
         $post->addUpvote($this->getUser());
-        $post->setKarma($post->getKarma() + 1);
         $em->persist($post);
         $em->flush();
         return new Response('added');
@@ -151,17 +150,14 @@ class PostController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
-            $post->setKarma($post->getKarma() + 1);
             $em->persist($post);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
-            $post->setKarma($post->getKarma() - 1);
         }
         $post->addDownvote($this->getUser());
-        $post->setKarma($post->getKarma() - 1);
         $em->persist($post);
         $em->flush();
         return new Response('added');
@@ -176,17 +172,5 @@ class PostController extends AbstractController
             $ytlink = null;
         }
         return $ytlink;
-    }
-
-    private function slugify(string $string): string
-    {
-        $string = preg_replace('~[^\pL\d]+~u', '-', $string);
-        $string = iconv('utf-8', 'us-ascii//TRANSLIT', $string);
-        $string = preg_replace('~[^-\w]+~', '', $string);
-        $string = trim($string, '-');
-        $string = preg_replace('~-+~', '-', $string);
-        $string = strtolower($string);
-
-        return $string;
     }
 }

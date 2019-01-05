@@ -35,6 +35,7 @@ class SubCategory
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="subcategories")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $category;
 
@@ -46,6 +47,11 @@ class SubCategory
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 
     public function getId(): ?int
