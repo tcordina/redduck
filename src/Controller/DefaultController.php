@@ -7,12 +7,11 @@ use App\Entity\Post;
 use App\Entity\SubCategory;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DefaultController extends AbstractController
 {
@@ -31,11 +30,11 @@ class DefaultController extends AbstractController
      * @Route("/setadmin/{user}", name="grant_admin", methods="POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function setAdmin(Request $request, User $user)
+    public function setAdmin(Request $request, User $user, AuthorizationCheckerInterface $checker)
     {
         if ($this->isCsrfTokenValid('grant_admin', $request->get('_csrf_token'))) {
             $em = $this->getDoctrine()->getManager();
-            if ($user->getRoles() === ['ROLE_ADMIN']) {
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
                 $user->setRoles([]);
             } else {
                 $user->setRoles(['ROLE_ADMIN']);
@@ -52,11 +51,11 @@ class DefaultController extends AbstractController
      * @Route("/setmoderator/{user}", name="grant_mod", methods="POST")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function setModerator(Request $request, User $user)
+    public function setModerator(Request $request, User $user, AuthorizationCheckerInterface $checker)
     {
         if ($this->isCsrfTokenValid('grant_mod', $request->get('_csrf_token'))) {
             $em = $this->getDoctrine()->getManager();
-            if ($user->getRoles() === ['ROLE_MODERATOR']) {
+            if (in_array('ROLE_MODERATOR', $user->getRoles())) {
                 $user->setRoles([]);
             } else {
                 $user->setRoles(['ROLE_MODERATOR']);

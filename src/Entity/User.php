@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
     /**
      * @ORM\Id()
@@ -133,9 +133,39 @@ class User implements UserInterface
         $this->downvotedmessages = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->username;
+    }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize(): string
+    {
+        return serialize([
+            $this->id,
+            $this->email,
+            $this->username,
+            $this->bio,
+            $this->password,
+            $this->roles,
+            $this->image,
+        ]);
+    }
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized): void
+    {
+        list(
+            $this->id,
+            $this->email,
+            $this->username,
+            $this->bio,
+            $this->password,
+            $this->roles,
+            $this->image) = unserialize($serialized);
     }
 
     /**
