@@ -25,7 +25,7 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts", fetch="EAGER")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $author;
 
@@ -66,6 +66,11 @@ class Post
      * @ORM\Column(type="text", nullable=true)
      */
     private $content;
+
+    /**
+     * @ORM\Column(type="integer", length=10)
+     */
+    private $karma;
 
     /**
      * @ORM\Column(type="datetime")
@@ -328,7 +333,13 @@ class Post
 
     public function getKarma(): int
     {
-        return count($this->upvotes) - count($this->downvotes);
+        return $this->karma;
+    }
+
+    public function setKarma(int $karma): self
+    {
+        $this->karma = $karma;
+        return $this;
     }
 
     public function getYtlink(): ?string

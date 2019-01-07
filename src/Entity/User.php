@@ -65,8 +65,8 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="upvotes")
      * @ORM\JoinTable(name="post_upvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
      * )
      */
     private $upvotedposts;
@@ -74,8 +74,8 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="downvotes")
      * @ORM\JoinTable(name="post_downvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
      * )
      */
     private $downvotedposts;
@@ -83,8 +83,8 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="upvotes")
      * @ORM\JoinTable(name="message_upvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
      * )
      */
     private $upvotedmessages;
@@ -92,8 +92,8 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="downvotes")
      * @ORM\JoinTable(name="message_downvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="CASCADE")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="CASCADE")}
+     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
+     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
      * )
      */
     private $downvotedmessages;

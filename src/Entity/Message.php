@@ -25,7 +25,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $author;
 
@@ -39,6 +39,11 @@ class Message
      * @ORM\Column(type="text", nullable=true)
      */
     private $content;
+
+    /**
+     * @ORM\Column(type="integer", length=10)
+     */
+    private $karma;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -264,6 +269,12 @@ class Message
 
     public function getKarma(): int
     {
-        return count($this->upvotes) - count($this->downvotes);
+        return $this->karma;
+    }
+
+    public function setKarma(int $karma): self
+    {
+        $this->karma = $karma;
+        return $this;
     }
 }

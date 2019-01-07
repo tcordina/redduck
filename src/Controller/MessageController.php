@@ -126,14 +126,17 @@ class MessageController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($message->getUpvotes()->contains($this->getUser())) {
             $message->removeUpvote($this->getUser());
+            $message->setKarma($message->getKarma() - 1);
             $em->persist($message);
             $em->flush();
             return new Response('removed');
         }
         if ($message->getDownvotes()->contains($this->getUser())) {
             $message->removeDownvote($this->getUser());
+            $message->setKarma($message->getKarma() + 1);
         }
         $message->addUpvote($this->getUser());
+        $message->setKarma($message->getKarma() + 1);
         $em->persist($message);
         $em->flush();
         return new Response('added');
@@ -150,14 +153,17 @@ class MessageController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         if ($message->getDownvotes()->contains($this->getUser())) {
             $message->removeDownvote($this->getUser());
+            $message->setKarma($message->getKarma() + 1);
             $em->persist($message);
             $em->flush();
             return new Response('removed');
         }
         if ($message->getUpvotes()->contains($this->getUser())) {
             $message->removeUpvote($this->getUser());
+            $message->setKarma($message->getKarma() - 1);
         }
         $message->addDownvote($this->getUser());
+        $message->setKarma($message->getKarma() - 1);
         $em->persist($message);
         $em->flush();
         return new Response('added');
