@@ -5,10 +5,7 @@
 {% block body %}
     <h1>Edit Message</h1>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">Update</button>
-    {{ form_end(form) }}
+    {{ include('message/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a class="btn btn-link" href="{{ path('post_show', {'id': message.post.id, 'slug': message.post.slug}) }}">Back to post</a>
 
@@ -22,7 +19,7 @@
             let filePath = $(input).val()
             fileSplit = filePath.split('\\')
             fileName = fileSplit[fileSplit.length - 1]
-            $(input).next('.custom-file-label').html(fileName)
+            $('.btn-label-text').html(fileName)
             if($(input).val().length === 0) {
                 $('#message_content').attr('required', 'required')
             } else {
@@ -42,19 +39,16 @@
                 }
             }
         }
-        {% if message.image is not null %}
         $(document).ready(function() {
-            $('#message_imageFile_file').next('.custom-file-label').html('{{ message.image }}')
+            {% if message.image is not null %}
+            $('.btn-label-text').html('{{ message.image }}')
             $('#message_content').removeAttr('required')
+            {% endif %}
+            handleCheckbox($('#message_imageFile_delete'))
         })
-        {% endif %}
 
         $('#message_imageFile_file').on('change', function () {
             updateFileInput()
-        })
-
-        $(document).ready(function() {
-            handleCheckbox($('#message_imageFile_delete'))
         })
 
         $('#message_imageFile_delete').on('change', function () {

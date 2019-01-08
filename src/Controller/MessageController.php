@@ -82,6 +82,7 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $message->setPost($message->getPost());
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('post_show', [

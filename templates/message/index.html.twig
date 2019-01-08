@@ -30,7 +30,9 @@
                                         class="karma-count">{{ message.karma }}</span>
                                 points
                             </small>
-                            <p>{{ message.content }}</p>
+                            {% if message.content is not null %}
+                            <p>{{ message.content|linkify|raw }}</p>
+                            {% endif %}
                             {% if message.image is not null %}
                                 <div class="post-image row justify-content-center">
                                     <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">

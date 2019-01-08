@@ -16,7 +16,7 @@
             let filePath = $(input).val()
             fileSplit = filePath.split('\\')
             fileName = fileSplit[fileSplit.length - 1]
-            $(input).next('.custom-file-label').html(fileName)
+            $('.btn-label-text').html(fileName)
             if($(input).val().length === 0) {
                 $('#post_content').attr('required', 'required')
             } else {

@@ -1,5 +1,11 @@
-{% set post = app.request.attributes.get('_route_params')['post']  %}
-{{ form_start(form, {'attr': {'id': 'form-comment-post', 'action': path('message_new', {'post': post}) } }) }}
-    {{ form_widget(form) }}
+{{ form_start(form, {'attr': {'id': 'form-comment-post', 'class': 'form-hide-file', 'action': path('message_edit', {'id': message.id}) } }) }}
+    {{ form_row(form.content) }}
+    {{ form_widget(form.imageFile.file) }}
+    {{ form_widget(form._token) }}
     <button type="submit" form="form-comment-post" class="btn btn-primary">{{ button_label|default('Commenter') }}</button>
-{{ form_end(form) }}
+    <label class="btn btn-secondary btn-label" for="{{ form.imageFile.file.vars.id }}">Image</label>
+    <span class="btn-label-text"></span>
+    {% if message.image is not null %}
+    {{ form_row(form.imageFile.delete) }}
+    {% endif %}
+</form>

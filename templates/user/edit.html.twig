@@ -20,7 +20,10 @@
 <div class="form-group row">
     <label class="col-md-3 col-form-label form-control-label">{{ form_label(form.imageFile) }}</label>
     <div class="col-md-9">
-        {{ form_widget(form.imageFile) }}
+        {{ form_widget(form.imageFile.file) }}
+        {% if(user.image is not null) %}
+        {{ form_widget(form.imageFile.delete) }}
+        {% endif %}
     </div>
 </div>
 <div class="form-group row">
@@ -38,8 +41,8 @@
 <div class="form-group row">
     <label class="col-md-3 col-form-label form-control-label"></label>
     <div class="col-md-9">
-        <input type="reset" class="btn btn-secondary" value="Cancel">
         <button type="submit" class="btn btn-primary">Save</button>
+        <input type="reset" class="btn btn-secondary" value="Cancel">
     </div>
 </div>
 {{ form_rest(form) }}

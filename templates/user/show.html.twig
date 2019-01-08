@@ -194,6 +194,10 @@
         $(document).ready(function() {
             updateFileInput()
             $('#user_plainpassword_first').val(null)
+            {% if user.image is not null %}
+            $('#user_imageFile_file').next('.custom-file-label').html('{{ user.image }}')
+            $('#message_content').removeAttr('required')
+            {% endif %}
         })
         $('#user_imageFile_file').on('change', function () {
             updateFileInput()

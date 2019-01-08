@@ -148,6 +148,11 @@ body {
     overflow: auto;
 }
 
+.comment-wrapper .media-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
 .comment-wrapper .media-list .media {
     margin-bottom: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -208,4 +213,12 @@ body {
 .thumbnail img.portrait {
     width: 100%;
     height: auto;
+}
+
+.form-hide-file .vich-image, .form-hide-file .custom-file {
+    display: none;
+}
+
+.form-hide-file .btn-label {
+    margin-bottom: 0;
 }

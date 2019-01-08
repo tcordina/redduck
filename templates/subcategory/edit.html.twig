@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit SubCategory{% endblock %}
+{% block title %}Edit SubRedduck{% endblock %}
 
 {% block body %}
-    <h1>Edit SubCategory</h1>
+    <h1>Edit SubRedduck</h1>
 
     {{ include('subcategory/_form.html.twig', {'button_label': 'Update'}) }}
-
+    <br>
+    <a href="{{ path('subcategory_show', {'slug': subcategory.slug}) }}">back to subredduck</a>
+    <br>
     {{ include('subcategory/_delete_form.html.twig') }}
 {% endblock %}

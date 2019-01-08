@@ -23,8 +23,11 @@ class MessageType extends AbstractType
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'allow_delete' => true,
-                'delete_label' => 'Delete image',
+                'delete_label' => 'Delete current image',
                 'download_uri' => false,
+                'attr' => [
+                    'class' => 'file-input',
+                ],
             ])
         ;
     }

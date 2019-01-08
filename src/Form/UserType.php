@@ -50,7 +50,10 @@ class UserType extends AbstractType
                 'allow_delete' => true,
                 'download_uri' => false,
                 'image_uri' => false,
-                'delete_label' => 'Delete',
+                'delete_label' => 'Delete current avatar',
+                'attr' => [
+                    'class' => 'file-input',
+                ],
             ])
         ;
     }

@@ -31,9 +31,12 @@ class PostType extends AbstractType
             ->add('imageFile', VichImageType::class, [
                 'required' => false,
                 'allow_delete' => true,
-                'delete_label' => 'Delete image',
+                'delete_label' => 'Delete current image',
                 'download_uri' => false,
                 'image_uri' => true,
+                'attr' => [
+                    'class' => 'file-input',
+                ],
             ])
         ;
     }

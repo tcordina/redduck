@@ -1,4 +1,14 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{{ form_start(form, {'attr': {'class': 'form-hide-file'} }) }}
+
+    {{ form.subcategory is defined ? form_row(form.subcategory) : '' }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.content) }}
+    {{ form_widget(form.imageFile.file) }}
+    {{ form_widget(form._token) }}
+    <button class="btn btn-primary">{{ button_label|default('Post') }}</button>
+    <label class="btn btn-secondary btn-label" for="{{ form.imageFile.file.vars.id }}">Image</label>
+    <span class="btn-label-text"></span>
+    {% if post.image is not null %}
+    {{ form_row(form.imageFile.delete) }}
+    {% endif %}
+</form>
