@@ -26,7 +26,7 @@
 <div class="form-group row">
     <label class="col-md-3 col-form-label form-control-label">{{ form_label(form.plainpassword.first) }}</label>
     <div class="col-md-9">
-        {{ form_widget(form.plainpassword.first, {'required': false}) }}
+        {{ form_widget(form.plainpassword.first, {'required': false, 'attr': {'autocomplete': 'off'} }) }}
     </div>
 </div>
 <div class="form-group row">
