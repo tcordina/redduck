@@ -145,6 +145,9 @@ class User implements UserInterface, \Serializable
             $this->password,
             $this->roles,
             $this->image,
+            $this->karma,
+            $this->createdAt,
+            $this->updatedAt
         ]);
     }
     /**
@@ -159,7 +162,10 @@ class User implements UserInterface, \Serializable
             $this->bio,
             $this->password,
             $this->roles,
-            $this->image) = unserialize($serialized);
+            $this->image,
+            $this->karma,
+            $this->createdAt,
+            $this->updatedAt) = unserialize($serialized);
     }
 
     /**
@@ -414,22 +420,6 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    /*public function getKarma(): ?int
-    {
-        $posts = $this->getPosts();
-        $messages = $this->getMessages();
-        $karma = 0;
-        foreach ($posts as $post) {
-            $karma += count($post->getUpvotes());
-            $karma -= count($post->getDownvotes());
-        }
-        foreach ($messages as $msg) {
-            $karma += count($msg->getUpvotes());
-            $karma -= count($msg->getDownvotes());
-        }
-        return $karma;
-    }*/
-
     /**
      * @return Collection|Post[]
      */
@@ -454,24 +444,6 @@ class User implements UserInterface, \Serializable
         }
 
         return $this;
-    }
-
-
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     /**
@@ -561,5 +533,22 @@ class User implements UserInterface, \Serializable
     {
         $this->karma = $karma;
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }

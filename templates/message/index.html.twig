@@ -32,7 +32,9 @@
                             </small>
                             <p>{{ message.content }}</p>
                             {% if message.image is not null %}
-                                <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">
+                                <div class="post-image row justify-content-center">
+                                    <img src="{{ asset('uploads/images/messages/' ~ message.image) }}" alt="">
+                                </div>
                             {% endif %}
                             {% if is_granted('MESSAGE_EDIT', message) %}
                                 <div class="media-footer">

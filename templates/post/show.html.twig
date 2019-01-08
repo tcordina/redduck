@@ -34,7 +34,8 @@
                 <h2 class="mb-0">{{ post.title }}</h2>
                 <small>
                     {% if post.author is not null %}
-                    Posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                        Posted by <a
+                            href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
                     {% else %}
                         Posted by deleted user
                     {% endif %}
@@ -56,11 +57,7 @@
                 </div>
                 {% if post.image is not null %}
                     <div class="post-image row justify-content-center">
-                        <div>
-                            <a href="{{ path('post_show', {'id':post.id, 'slug':post.slug}) }}">
-                                <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
-                            </a>
-                        </div>
+                        <img src="{{ asset('uploads/images/posts/' ~ post.image) }}" alt=""/>
                     </div>
                 {% elseif post.ytlink is not null %}
                     <div class="row justify-content-center">
@@ -218,7 +215,7 @@
             fileSplit = filePath.split('\\')
             fileName = fileSplit[fileSplit.length - 1]
             $(input).next('.custom-file-label').html(fileName)
-            if($(input).val().length === 0) {
+            if ($(input).val().length === 0) {
                 $('#message_content').attr('required', 'required')
             } else {
                 $('#message_content').removeAttr('required')
