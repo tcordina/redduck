@@ -24,7 +24,7 @@ class Message
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages", fetch="EAGER")
      * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $author;
@@ -85,6 +85,7 @@ class Message
 
     public function __construct()
     {
+        $this->karma = 0;
         $this->upvotes = new ArrayCollection();
         $this->downvotes = new ArrayCollection();
     }

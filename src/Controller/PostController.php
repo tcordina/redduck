@@ -124,20 +124,26 @@ class PostController extends AbstractController
             return new Response('login');
         }
         $em = $this->getDoctrine()->getManager();
+        $author = $post->getAuthor();
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
             $post->setKarma($post->getKarma() - 1);
+            $author->setKarma($author->getKarma() - 1);
             $em->persist($post);
+            $em->persist($author);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
             $post->setKarma($post->getKarma() + 1);
+            $author->setKarma($author->getKarma() + 1);
         }
         $post->addUpvote($this->getUser());
         $post->setKarma($post->getKarma() + 1);
+        $author->setKarma($author->getKarma() + 1);
         $em->persist($post);
+        $em->persist($author);
         $em->flush();
         return new Response('added');
     }
@@ -151,20 +157,26 @@ class PostController extends AbstractController
             return new Response('login');
         }
         $em = $this->getDoctrine()->getManager();
+        $author = $post->getAuthor();
         if ($post->getDownvotes()->contains($this->getUser())) {
             $post->removeDownvote($this->getUser());
             $post->setKarma($post->getKarma() + 1);
+            $author->setKarma($author->getKarma() + 1);
             $em->persist($post);
+            $em->persist($author);
             $em->flush();
             return new Response('removed');
         }
         if ($post->getUpvotes()->contains($this->getUser())) {
             $post->removeUpvote($this->getUser());
             $post->setKarma($post->getKarma() - 1);
+            $author->setKarma($author->getKarma() - 1);
         }
         $post->addDownvote($this->getUser());
         $post->setKarma($post->getKarma() - 1);
+        $author->setKarma($author->getKarma() - 1);
         $em->persist($post);
+        $em->persist($author);
         $em->flush();
         return new Response('added');
     }

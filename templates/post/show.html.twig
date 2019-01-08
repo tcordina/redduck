@@ -32,9 +32,14 @@
             </div>
             <div class="col-11">
                 <h2 class="mb-0">{{ post.title }}</h2>
-                <small>Posted by <a
-                            href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                <small>
+                    {% if post.author is not null %}
+                    Posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                    {% else %}
+                        Posted by deleted user
+                    {% endif %}
                 </small>
+
                 -
                 <small>{{ post.createdAt|timeago }}</small>
                 {% if is_granted('POST_EDIT', post) %}

@@ -73,8 +73,11 @@
                                 </small>
                             </div>
                             <p>
-                                Posted by <a
-                                        href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                                {% if post.author is not null %}
+                                Posted by <a href="{{ path('user_show', {'username': post.author.username}) }}">u/{{ post.author.username }}</a>
+                                {% else %}
+                                Posted by deleted user
+                                {% endif %}
                             </p>
                             {% if post.image is not null %}
                                 <div class="post-image row justify-content-center">

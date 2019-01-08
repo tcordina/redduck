@@ -25,7 +25,7 @@
                                 <span class="text-muted float-right">
                                     <small class="text-muted">{{ message.createdAt|timeago }}</small>
                                 </span>
-                            <strong class="text-success">u/{{ message.author.username }}</strong>&nbsp;
+                            <strong class="text-success">u/{{ message.author ? message.author.username : 'Deleted user' }}</strong>&nbsp;
                             <small><span
                                         class="karma-count">{{ message.karma }}</span>
                                 points

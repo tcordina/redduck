@@ -53,6 +53,7 @@
                                         {{ user.karma }} Karma
                                     </small>
                                 </div>
+                                {% if app.user != user %}
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <form class="d-inline-block" method="post"
                                           action="{{ path('grant_admin', {'user': user.id}) }}">
@@ -68,6 +69,7 @@
                                             {{ user.hasRole('ROLE_MODERATOR') ? 'Remove' : 'Grant' }} mod
                                         </button>
                                     </form>
+                                {% endif %}
                                 {% endif %}
                             </div>
                             <div class="col-md-8">

@@ -64,39 +64,32 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="upvotes")
-     * @ORM\JoinTable(name="post_upvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
-     * )
+     * @ORM\JoinTable(name="post_upvotes")
      */
     private $upvotedposts;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="downvotes")
-     * @ORM\JoinTable(name="post_downvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
-     * )
+     * @ORM\JoinTable(name="post_downvotes")
      */
     private $downvotedposts;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="upvotes")
-     * @ORM\JoinTable(name="message_upvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
-     * )
+     * @ORM\JoinTable(name="message_upvotes")
      */
     private $upvotedmessages;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Message", inversedBy="downvotes")
-     * @ORM\JoinTable(name="message_downvotes",
-     *     joinColumns={@ORM\JoinColumn(onDelete="SET NULL")},
-     *     inverseJoinColumns={@ORM\JoinColumn(onDelete="SET NULL")}
-     * )
+     * @ORM\JoinTable(name="message_downvotes")
      */
     private $downvotedmessages;
+
+    /**
+     * @ORM\Column(type="integer", length=10)
+     */
+    private $karma;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -125,6 +118,7 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
+        $this->karma = 0;
         $this->posts = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->upvotedposts = new ArrayCollection();
@@ -420,7 +414,7 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    public function getKarma(): ?int
+    /*public function getKarma(): ?int
     {
         $posts = $this->getPosts();
         $messages = $this->getMessages();
@@ -434,7 +428,7 @@ class User implements UserInterface, \Serializable
             $karma -= count($msg->getDownvotes());
         }
         return $karma;
-    }
+    }*/
 
     /**
      * @return Collection|Post[]
@@ -555,6 +549,17 @@ class User implements UserInterface, \Serializable
             $this->downvotedmessages->removeElement($downvotedmessage);
         }
 
+        return $this;
+    }
+
+    public function getKarma(): int
+    {
+        return $this->karma;
+    }
+
+    public function setKarma(int $karma): self
+    {
+        $this->karma = $karma;
         return $this;
     }
 }

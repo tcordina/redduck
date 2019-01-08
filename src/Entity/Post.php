@@ -100,6 +100,7 @@ class Post
 
     public function __construct()
     {
+        $this->karma = 0;
         $this->messages = new ArrayCollection();
         $this->upvotes = new ArrayCollection();
         $this->downvotes = new ArrayCollection();
