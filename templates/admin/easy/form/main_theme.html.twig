@@ -1,0 +1,14 @@
+{% extends "@EasyAdmin/form/bootstrap_4.html.twig" %}
+{% block vich_image_widget %}
+    {% spaceless %}
+        <div class="easyadmin-vich-image">
+            {{ form_widget(form.file) }}
+            {% if form.delete is defined %}
+                {{ form_row(form.delete, { label: 'action.delete' }) }}
+            {% endif %}
+            {% if download_uri|default('') is not empty %}
+                <img src="{{ asset(image_uri) }}">
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}

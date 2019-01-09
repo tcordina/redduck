@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -14,6 +15,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="Username already in use."
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Email already in use."
+ * )
  */
 class User implements UserInterface, \Serializable
 {
