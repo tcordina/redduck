@@ -49,3 +49,4 @@ easy_admin:
         - { entity: 'SubCategory', label: 'Subredducks', icon: 'list' }
         - { entity: 'Post', label: 'Posts', icon: 'envelope' }
         - { entity: 'Message', label: 'Comments', icon: 'comment' }
+        form_theme: 'admin/easy/form/main_theme.html.twig'

