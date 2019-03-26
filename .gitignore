@@ -1,6 +1,13 @@
+/.idea
+###> app/docker ###
+docker-compose.override.yml
+###> app/docker ###
+
+###> app/phpcs ###
+.php_cs
+###< app/phpcs ###
 
 ###> symfony/framework-bundle ###
-/.idea
 /.env
 /public/bundles/
 /var/

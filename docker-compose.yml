@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+    app:
+        build:
+            context: .
+            target: app-dev
+        depends_on:
+            - db
+        networks:
+            - frontend
+            - backend
+        volumes:
+            - .:/app
+
+    db:
+        image: mysql:5.7
+        environment:
+          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+          - MYSQL_DATABASE=${MYSQL_DATABASE}
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - backend
+
+volumes:
+    db_data:
+        driver: local
+
+networks:
+    frontend:
+    backend:
