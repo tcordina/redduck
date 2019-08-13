@@ -38,7 +38,7 @@ class SubCategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $slug = $sluggerService->slugify($category->getName());
+            $slug = $sluggerService->slugify($subCategory->getName());
             $subCategory
                 ->setSlug(strtolower($slug))
                 ->setCategory($category);

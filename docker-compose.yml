@@ -1,32 +1,57 @@
 version: '3.4'
 
+networks:
+    web:
+        external: true
+    internal:
+        external: false
+
 services:
     app:
         build:
             context: .
-            target: app-dev
+            target: app
+        environment:
+            - APP_ENV=${APP_ENV}
+            - APP_SECRET=${APP_SECRET}
+            - DATABASE_URL=${DATABASE_URL}
+            - MAILER_URL=${MAILER_URL}
         depends_on:
-            - db
+            - mysql
         networks:
-            - frontend
-            - backend
+            - web
+            - internal
         volumes:
             - .:/app
+        labels:
+            - traefik.backend=redduck
+            - traefik.frontend.rule=Host:redduck.thibaudcordina.fr
+            - traefik.docker.network=web
+            - traefik.port=80
 
-    db:
-        image: mysql:5.7
+    mysql:
+        build:
+            context: docker
+            dockerfile: MysqlDockerfile
         environment:
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-          - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
         volumes:
-            - db_data:/var/lib/mysql
+            - ./db_data:/var/lib/mysql
         networks:
-            - backend
+            - internal
+        labels:
+            - traefik.enable=false
 
-volumes:
-    db_data:
-        driver: local
-
-networks:
-    frontend:
-    backend:
+    adminer:
+        image: adminer:4.6.3-standalone
+        labels:
+            - traefik.backend=adminer.redduck
+            - traefik.frontend.rule=Host:adminer.redduck.thibaudcordina.fr
+            - traefik.docker.network=web
+            - traefik.port=8080
+        networks:
+            - internal
+            - web
+        depends_on:
+            - mysql
