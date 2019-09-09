@@ -24,11 +24,10 @@ services:
         volumes:
             - .:/app
         labels:
-            - traefik.backend=redduck
-            - traefik.frontend.rule=Host:redduck.thibaudcordina.fr
-            - traefik.docker.network=web
+            - traefik.backend=${TRAEFIK_BACKEND}
+            - traefik.frontend.rule=Host:${TRAEFIK_FRONTEND}
             - traefik.port=80
-
+            - traefik.docker.network=${TRAEFIK_DOCKER_NETWORK}
     mysql:
         build:
             context: docker
@@ -46,10 +45,10 @@ services:
     adminer:
         image: adminer:4.6.3-standalone
         labels:
-            - traefik.backend=adminer.redduck
-            - traefik.frontend.rule=Host:adminer.redduck.thibaudcordina.fr
-            - traefik.docker.network=web
+            - traefik.backend=adminer.${TRAEFIK_BACKEND}
+            - traefik.frontend.rule=Host:adminer-${TRAEFIK_FRONTEND}
             - traefik.port=8080
+            - traefik.docker.network=${TRAEFIK_DOCKER_NETWORK}
         networks:
             - internal
             - web

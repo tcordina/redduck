@@ -1,5 +1,5 @@
 ARG COMPOSER_VERSION=1.9.0
-ARG PHP_VERSION=7.3.6
+ARG PHP_VERSION=7.3.9
 ARG APCU_VERSION=5.1.17
 
 
@@ -60,9 +60,9 @@ RUN { \
         echo 'opcache.validate_timestamps = 0'; \
         echo 'realpath_cache_size = 4096K'; \
         echo 'realpath_cache_ttl = 600'; \
-    } > /usr/local/etc/php/php.ini
-
-RUN { \
+    } > /usr/local/etc/php/php.ini \
+    && \
+    { \
         echo 'date.timezone = Europe/Paris'; \
         echo 'short_open_tag = off'; \
         echo 'memory_limit = -1'; \
@@ -90,9 +90,8 @@ WORKDIR /app
 # Install Composer
 RUN set -ex; \
     curl -L -o composer.phar https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar; \
-    chmod +x composer.phar && mv composer.phar /usr/local/bin/composer;
-
-RUN composer install -o --no-ansi --no-dev
+    chmod +x composer.phar && mv composer.phar /usr/local/bin/composer; \
+    composer install -o --no-ansi --no-dev
 
 # copy the Entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
