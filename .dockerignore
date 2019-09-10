@@ -1,15 +1,10 @@
 /.git
-/public/build
-/public/bundles
+/docker/MysqlDockerfile
 /var
 /vendor
 .dockerignore
-.idea
 .gitignore
 .php_cs.dist
-bump-version.sh
-docker-compose.ci.yml
-docker-compose.override.yml.dist
 docker-compose.yml
 Dockerfile
 Makefile

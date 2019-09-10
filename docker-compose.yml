@@ -21,8 +21,6 @@ services:
         networks:
             - web
             - internal
-        volumes:
-            - .:/app
         labels:
             - traefik.backend=${TRAEFIK_BACKEND}
             - traefik.frontend.rule=Host:${TRAEFIK_FRONTEND}
@@ -36,7 +34,7 @@ services:
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_DATABASE=${MYSQL_DATABASE}
         volumes:
-            - ./db_data:/var/lib/mysql
+            - mysql_data:/var/lib/mysql
         networks:
             - internal
         labels:
@@ -54,3 +52,7 @@ services:
             - web
         depends_on:
             - mysql
+
+volumes:
+    mysql_data:
+        driver: local

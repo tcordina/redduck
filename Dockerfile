@@ -6,11 +6,9 @@ ARG APCU_VERSION=5.1.17
 #####################################
 ##               BASE              ##
 #####################################
-FROM php:${PHP_VERSION}-fpm as base
+FROM php:${PHP_VERSION}-fpm-alpine as base
 
 ARG APCU_VERSION
-
-WORKDIR /app
 
 EXPOSE 80
 
@@ -18,32 +16,38 @@ EXPOSE 80
 RUN export PHP_CPPFLAGS="${PHP_CPPFLAGS} -std=c++11"; \
     set -ex; \
     # Install required system packages
-    apt-get update; \
-    apt-get install -qy --no-install-recommends \
-            nginx \
-            supervisor \
-            libzip-dev \
+    apk add --no-cache \
+        nginx \
+        supervisor \
+    ; \
+    apk add --no-cache --virtual build-dependencies \
+        autoconf \
+        gcc \
+        libc-dev \
+        libzip-dev \
+        make \
+        pkgconfig \
     ; \
     #Install the PHP extensions
     docker-php-ext-install -j "$(nproc)" \
-            pdo \
-            pdo_mysql \
-            zip \
-            bcmath \
+        bcmath \
+        pdo \
+        pdo_mysql \
+        zip \
     ; \
     pecl install \
-            apcu-${APCU_VERSION} \
+        apcu-${APCU_VERSION} \
     ; \
     docker-php-ext-enable \
-            opcache \
-            apcu \
+        opcache \
+        apcu \
     ; \
     docker-php-source delete; \
-    # Clean aptitude cache and tmp directory
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*;
-
-## set recommended PHP.ini settings
-RUN { \
+    apk del build-dependencies; \
+    # Clean tmp directory
+    rm -rf /tmp/* /var/tmp/*; \
+    ## set recommended PHP.ini settings
+    { \
         echo 'date.timezone = Europe/Paris'; \
         echo 'short_open_tag = off'; \
         echo 'expose_php = off'; \
@@ -60,13 +64,15 @@ RUN { \
         echo 'opcache.validate_timestamps = 0'; \
         echo 'realpath_cache_size = 4096K'; \
         echo 'realpath_cache_ttl = 600'; \
-    } > /usr/local/etc/php/php.ini \
-    && \
+        echo 'session.name = JSESSIONID'; \
+    } > /usr/local/etc/php/php.ini; \
     { \
         echo 'date.timezone = Europe/Paris'; \
         echo 'short_open_tag = off'; \
         echo 'memory_limit = -1'; \
-    } > /usr/local/etc/php/php-cli.ini
+    } > /usr/local/etc/php/php-cli.ini; \
+    ## create dir to avoid nginx error
+    mkdir /var/tmp/nginx;
 
 # copy the Nginx config
 COPY docker/nginx.conf /etc/nginx/
@@ -89,9 +95,11 @@ WORKDIR /app
 
 # Install Composer
 RUN set -ex; \
+    apk add --no-cache curl; \
     curl -L -o composer.phar https://getcomposer.org/download/${COMPOSER_VERSION}/composer.phar; \
     chmod +x composer.phar && mv composer.phar /usr/local/bin/composer; \
-    composer install -o --no-ansi --no-dev
+    composer install -o --no-ansi --no-dev; \
+    apk del curl;
 
 # copy the Entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -100,4 +108,3 @@ RUN ["chmod", "+x", "/usr/local/bin/entrypoint.sh"]
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
